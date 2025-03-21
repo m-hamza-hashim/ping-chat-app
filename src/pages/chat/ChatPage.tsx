@@ -1,10 +1,35 @@
-import styles from '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
-import { MainContainer, ChatContainer, MessageList, StarButton, Message, MessageInput, ConversationHeader, Avatar, VoiceCallButton, MessageSeparator, VideoCallButton, ArrowButton, InfoButton, TypingIndicator, ConversationList, Conversation, Search, Sidebar, EllipsisButton, Button} from '@chatscope/chat-ui-kit-react';
-import {useState, useCallback, useEffect, } from "react";
+import { MainContainer, ChatContainer, MessageList, Message, MessageInput, ConversationHeader, Avatar,  TypingIndicator, ConversationList, Conversation, Sidebar} from '@chatscope/chat-ui-kit-react';
 import { LuLogOut } from "react-icons/lu";
+// import styles from '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
+import User from "../../config/context/UserContext";
+import {useContext} from "react";
+import "./chat.css"
+import {signOut, auth} from "../../config/firebase";
+import {useNavigate} from "react-router";
 
-function LoginPage () {
+function ChatPage () {
+  const {userID, setUser} = useContext(User);
+
+  const navigate = useNavigate();
+
+  console.log(userID);
+
+  const logoutFunc = () => {
+
+    signOut(auth).then(() => {
+      // Sign-out successful.
+      console.log("signed out");
+      setUser(null);
+      navigate("/");
+    }).catch((error) => {
+      // An error happened.
+      console.log("not signed out")
+    });
+  }
+
 return (
+
+  
     <MainContainer
   responsive
   style={{
@@ -14,8 +39,9 @@ return (
   <Sidebar
     position="left"
   >
+
     <ConversationHeader>
-    <ConversationHeader.Actions>
+    <ConversationHeader.Actions onClick={logoutFunc}>
     <LuLogOut size={27} color="#008eff"/> {/* Custom Button will appear here */}
   </ConversationHeader.Actions>
   <Avatar
@@ -341,5 +367,5 @@ return (
 )
 }
 
-export default LoginPage;
+export default ChatPage;
     

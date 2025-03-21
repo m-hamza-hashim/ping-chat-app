@@ -1,0 +1,20 @@
+
+
+.big-box {
+    height: 97vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f6fbff;
+}
+
+.main-box > Form {
+    width: 100vw;
+}
+
+.main-box {
+    border: 1px;
+    padding: 54px;
+    box-shadow: 0 2px 6px #0000001f, inset 0 -1px #dadce0;
+    background-color: white;
+}
