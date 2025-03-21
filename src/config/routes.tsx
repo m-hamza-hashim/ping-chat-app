@@ -4,6 +4,7 @@ import LoginPage from "../pages/login/LoginPage"
 import RegPage from "../pages/register/RegPage"
 import {useContext} from "react";
 import User from "./context/UserContext";
+import NotFound from "../pages/not-found/NotFound";
 
 
 
@@ -19,6 +20,7 @@ function AppRouter() {
         <Route path="/login" element={!userID ? <LoginPage /> : <Navigate to="/chat" />} />
         <Route path="/" element={!userID ? <LoginPage /> : <Navigate to="/chat" />} />
         <Route path="/register" element={!userID ? <RegPage /> : <Navigate to="/chat" />} />
+        <Route path="*" element={!userID ? <NotFound /> : <Navigate to="/chat" />} />
         </Routes>
         </BrowserRouter>
     );

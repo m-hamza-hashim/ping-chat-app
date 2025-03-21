@@ -1,6 +1,5 @@
 import { MainContainer, ChatContainer, MessageList, Message, MessageInput, ConversationHeader, Avatar,  TypingIndicator, ConversationList, Conversation, Sidebar} from '@chatscope/chat-ui-kit-react';
 import { LuLogOut } from "react-icons/lu";
-// import styles from '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 import User from "../../config/context/UserContext";
 import {useContext} from "react";
 import "./chat.css"
@@ -23,7 +22,7 @@ function ChatPage () {
       navigate("/");
     }).catch((error) => {
       // An error happened.
-      console.log("not signed out")
+      console.log("error ---> ", error)
     });
   }
 

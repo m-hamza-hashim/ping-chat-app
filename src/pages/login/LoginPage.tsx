@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext} from 'react';
 import { LockOutlined, MailOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Form, Input, Flex } from 'antd';
 import { Link, useNavigate } from "react-router";
@@ -12,7 +12,7 @@ const LoginPage: React.FC = () => {
 
     let navigate = useNavigate();
 
-    const {userID, setUser} = useContext(User);
+    const {setUser} = useContext(User);
 
   const onFinish = (values: any) => {
     signInWithEmailAndPassword(auth, values.email, values.password)
