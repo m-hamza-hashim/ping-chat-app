@@ -1,7 +1,7 @@
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import { LockOutlined, MailOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Form, Input, Flex } from 'antd';
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate} from "react-router";
 import "./login.css"
 import { auth, signInWithEmailAndPassword } from "../../config/firebase";
 import User from "../../config/context/UserContext";
@@ -9,10 +9,11 @@ import User from "../../config/context/UserContext";
 
 
 const LoginPage: React.FC = () => {
-
     let navigate = useNavigate();
 
     const {setUser} = useContext(User);
+
+    let [errorMessage, setErrorMessage] = useState(false);
 
   const onFinish = (values: any) => {
     signInWithEmailAndPassword(auth, values.email, values.password)
@@ -29,55 +30,62 @@ const LoginPage: React.FC = () => {
       const errorCode = error.code;
       const errorMessage = error.message;
       console.log("error====> ", error);
+      setErrorMessage(true);
     });
   };
 
-  return (
-    <div className="big-box">
-    <div className="main-box">
-    <Form
-      name="login"
-      initialValues={{ remember: true }}
-      style={{ maxWidth: 360 }}
-      onFinish={onFinish}
-    >
-      <Form.Item
-                name="email"
-                rules={[
-                  { required: true, message: "Please input your Email!" },
-                  {
-                    pattern: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/,
-                    message: "Please input a valid Email!",
-                  },
-                ]}
-              >
-                <Input prefix={<MailOutlined />} placeholder="Email" />
-              </Form.Item>
-      <Form.Item
-        name="password"
-        rules={[{ required: true, message: 'Please input your Password!' }]}
+    return (
+      <div className="log-big-box">
+      <div className="log-main-box">
+      <Form
+        name="login"
+        initialValues={{ remember: true }}
+        style={{ maxWidth: 360 }}
+        onFinish={onFinish}
       >
-        <Input prefix={<LockOutlined />} type="password" placeholder="Password" />
-      </Form.Item>
-   
-             <Form.Item>
-               <Flex justify="space-between" align="center">
-                 <Form.Item name="remember" noStyle>
-                   <Checkbox required>Remember me</Checkbox>
-                 </Form.Item>
-               </Flex>
-             </Form.Item>
 
-        <Form.Item>
-                   <Button block type="primary" htmlType="submit">
-                     Login
-                   </Button>
-                   or <Link to="/register">Register here!</Link>
-                 </Form.Item>
-    </Form>
-    </div>
-    </div>
-  );
+        {errorMessage && <p style={{ 
+      color: "rgb(255 91 91)", 
+      fontSize: "14px", 
+    }}>Incorrect email or password</p>}
+
+        <Form.Item
+                  name="email"
+                  rules={[
+                    { required: true, message: "Please input your Email!" },
+                    {
+                      pattern: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/,
+                      message: "Please input a valid Email!",
+                    },
+                  ]}
+                >
+                  <Input prefix={<MailOutlined />} placeholder="Email" />
+                </Form.Item>
+        <Form.Item
+          name="password"
+          rules={[{ required: true, message: 'Please input your Password!' }]}
+        >
+          <Input prefix={<LockOutlined />} type="password" placeholder="Password" />
+        </Form.Item>
+     
+               <Form.Item>
+                 <Flex justify="space-between" align="center">
+                   <Form.Item name="remember" noStyle>
+                     <Checkbox required>Remember me</Checkbox>
+                   </Form.Item>
+                 </Flex>
+               </Form.Item>
+  
+          <Form.Item>
+                     <Button block type="primary" htmlType="submit">
+                       Login
+                     </Button>
+                     or <Link to="/register">Register here!</Link>
+                   </Form.Item>
+      </Form>
+      </div>
+      </div>
+    );
 };
 
 export default LoginPage;

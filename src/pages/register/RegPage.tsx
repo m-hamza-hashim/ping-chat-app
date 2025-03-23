@@ -16,7 +16,7 @@ const RegPage: React.FC = () => {
         const user = userCredential.user;
         // ...
         console.log("user =======> ", user);
-        navigate("/");
+        navigate("/login");
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -27,8 +27,8 @@ const RegPage: React.FC = () => {
   };
 
   return (
-    <div className="big-box">
-      <div className="main-box">
+    <div className="reg-big-box">
+      <div className="reg-main-box">
         <Form
           name="login"
           initialValues={{ remember: true }}
