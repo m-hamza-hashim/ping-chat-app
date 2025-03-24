@@ -14,7 +14,7 @@ import {
 import { LuLogOut } from "react-icons/lu";
 import {useCallback, useState, useEffect, useContext } from "react";
 import "./chat.css";
-import { signOut, auth} from "../../config/firebase";
+import { signOut, auth,  collection, query, where, getDocs, db} from "../../config/firebase";
 import User from "../../config/context/UserContext";
 
 function ChatPage() {
@@ -68,7 +68,7 @@ function ChatPage() {
   ]);
 
   
-  const logoutFunc = () => {
+  const logoutFunc = (): void => {
     signOut(auth)
       .then(() => {
         // Sign-out successful.
@@ -82,6 +82,27 @@ function ChatPage() {
 
 
     const {userID} = useContext(User);
+
+    let [users, setUsers] = useState<any>([]);
+
+    const callUsers = async (): Promise<void> => {
+      const q = query(collection(db, "users"), where("email", "!=", userID.email));
+      const usersList: any[] = [];
+      
+
+const querySnapshot = await getDocs(q);
+querySnapshot.forEach((doc) => {
+  // doc.data() is never undefined for query doc snapshots
+  usersList.push({...doc.data(), id: doc.id})
+});
+setUsers(usersList);
+    }
+
+    useEffect(() => {
+      callUsers();
+    }, [])
+
+  
 
 
   return (
@@ -108,37 +129,32 @@ function ChatPage() {
               status="available"
             />
             <ConversationHeader.Content>
-              <span
-                style={{
-                  alignSelf: "flex-center",
-                  color: "#ec1212",
-                }}
+              <span className="header-title"
               >
                 {userID.full_name}
               </span>
             </ConversationHeader.Content>
           </ConversationHeader>
           <ConversationList>
-            <Conversation onClick={handleConversationClick}>
+          {users.map((user: any) => (
+            <Conversation key={user.id} onClick={handleConversationClick}>
               <Avatar
-                src="      https://chatscope.io/storybook/react/assets/lilly-aj6lnGPk.svg
-"
-                name="Lilly"
+                src={`https://ui-avatars.com/api/?background=random&name=${user.full_name}`}
                 style={conversationAvatarStyle}
               />
               <Conversation.Content
-                name="Lilly"
+                name={user.full_name}
                 lastSenderName="Lilly"
-                info="Yes i can do it for you"
+                info="fdsfdsfdsf"
                 style={conversationContentStyle}
               />
             </Conversation>
-          </ConversationList>
+          ))}
+        </ConversationList>
         </Sidebar>
         <ChatContainer className="chat-container" style={chatContainerStyle}>
           <ConversationHeader>
             <ConversationHeader.Back onClick={handleBackClick} />
-            {/* <ConversationHeader.Back /> */}
             <Avatar
               name="Zoe"
               src="https://chatscope.io/storybook/react/assets/zoe-E7ZdmXF0.svg"

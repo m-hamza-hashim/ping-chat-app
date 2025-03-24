@@ -9,7 +9,7 @@ import { auth, signInWithEmailAndPassword } from "../../config/firebase";
 
 const LoginPage: React.FC = () => {
 
-    let [errorMessage, setErrorMessage] = useState(false);
+    let [errorMessage, setErrorMessage] = useState<boolean>(false);
 
   const onFinish = (values: any) => {
     signInWithEmailAndPassword(auth, values.email, values.password)

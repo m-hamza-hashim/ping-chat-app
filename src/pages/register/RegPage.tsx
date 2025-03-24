@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import { LockOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Form, Input, Flex } from "antd";
 import { Link } from "react-router";
@@ -7,6 +7,8 @@ import { auth, createUserWithEmailAndPassword, setDoc, doc, db } from "../../con
 
 
 const RegPage: React.FC = () => {
+
+  let [errorMessage, setErrorMessage] = useState<boolean>(false);
 
   const onFinish = async (values: any) => {
     createUserWithEmailAndPassword(auth, values.email, values.password)
@@ -28,6 +30,8 @@ const RegPage: React.FC = () => {
         const errorMessage = error.message;
         // ..
         console.log("error ==========>", error);
+
+        setErrorMessage(true)
       });
   };
 
@@ -40,6 +44,10 @@ const RegPage: React.FC = () => {
           style={{ maxWidth: 360 }}
           onFinish={onFinish}
         >
+          {errorMessage && <p style={{ 
+      color: "rgb(255 91 91)", 
+      fontSize: "14px", 
+    }}>Please try another email</p>}
           <Form.Item
             name="full_name"
             rules={[
