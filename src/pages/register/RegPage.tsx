@@ -1,22 +1,27 @@
 import React from "react";
-import { LockOutlined, MailOutlined } from "@ant-design/icons";
+import { LockOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Form, Input, Flex } from "antd";
-import { Link, useNavigate } from "react-router";
+import { Link } from "react-router";
 import "./register.css";
-import { auth, createUserWithEmailAndPassword } from "../../config/firebase";
+import { auth, createUserWithEmailAndPassword, setDoc, doc, db } from "../../config/firebase";
 
 
 const RegPage: React.FC = () => {
-  let navigate = useNavigate();
 
-  const onFinish = (values: any) => {
+  const onFinish = async (values: any) => {
     createUserWithEmailAndPassword(auth, values.email, values.password)
-      .then((userCredential) => {
+      .then(async (userCredential) => {
         // Signed up
         const user = userCredential.user;
         // ...
         console.log("user =======> ", user);
-        navigate("/login");
+
+        await setDoc(doc(db, "users", user.uid), {
+          full_name: values.full_name,
+          email: values.email,
+          password: values.password,
+        });
+
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -35,6 +40,14 @@ const RegPage: React.FC = () => {
           style={{ maxWidth: 360 }}
           onFinish={onFinish}
         >
+          <Form.Item
+            name="full_name"
+            rules={[
+              { required: true, message: "Please input your full name!" },
+            ]}
+          >
+            <Input prefix={<UserOutlined />} placeholder="Full Name" />
+          </Form.Item>
           <Form.Item
             name="email"
             rules={[

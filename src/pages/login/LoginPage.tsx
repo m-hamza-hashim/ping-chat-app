@@ -1,17 +1,13 @@
-import React, {useContext, useState} from 'react';
+import React, { useState} from 'react';
 import { LockOutlined, MailOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Form, Input, Flex } from 'antd';
-import { Link, useNavigate} from "react-router";
+import { Link} from "react-router";
 import "./login.css"
 import { auth, signInWithEmailAndPassword } from "../../config/firebase";
-import User from "../../config/context/UserContext";
 
 
 
 const LoginPage: React.FC = () => {
-    let navigate = useNavigate();
-
-    const {setUser} = useContext(User);
 
     let [errorMessage, setErrorMessage] = useState(false);
 
@@ -22,8 +18,6 @@ const LoginPage: React.FC = () => {
       const user = userCredential.user;
       console.log("user ==> ", user);
       // ...
-      setUser(user);
-      navigate("/chat");
       
     })
     .catch((error) => {

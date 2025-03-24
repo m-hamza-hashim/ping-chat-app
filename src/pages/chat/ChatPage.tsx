@@ -12,11 +12,10 @@ import {
   Sidebar,
 } from "@chatscope/chat-ui-kit-react";
 import { LuLogOut } from "react-icons/lu";
-import User from "../../config/context/UserContext";
-import { useContext, useCallback, useState, useEffect } from "react";
+import {useCallback, useState, useEffect, useContext } from "react";
 import "./chat.css";
-import { signOut, auth } from "../../config/firebase";
-import { useNavigate } from "react-router";
+import { signOut, auth} from "../../config/firebase";
+import User from "../../config/context/UserContext";
 
 function ChatPage() {
   const [sidebarVisible, setSidebarVisible] = useState(false);
@@ -68,23 +67,22 @@ function ChatPage() {
     setChatContainerStyle,
   ]);
 
-  const { setUser } = useContext(User);
-
-  const navigate = useNavigate();
-
+  
   const logoutFunc = () => {
     signOut(auth)
       .then(() => {
         // Sign-out successful.
         console.log("signed out");
-        setUser(null);
-        navigate("/");
       })
       .catch((error) => {
         // An error happened.
         console.log("error ---> ", error);
       });
-  };
+    };
+
+
+    const {userID} = useContext(User);
+
 
   return (
     <div style={{ height: "600px", position: "relative" }}>
@@ -106,8 +104,7 @@ function ChatPage() {
               {/* Custom Button will appear here */}
             </ConversationHeader.Actions>
             <Avatar
-              name="Eliot"
-              src="https://chatscope.io/storybook/react/assets/eliot-JNkqSAth.svg"
+              src={`https://ui-avatars.com/api/?background=random&name=${userID.full_name}`}
               status="available"
             />
             <ConversationHeader.Content>
@@ -117,7 +114,7 @@ function ChatPage() {
                   color: "#ec1212",
                 }}
               >
-                Custom content
+                {userID.full_name}
               </span>
             </ConversationHeader.Content>
           </ConversationHeader>
