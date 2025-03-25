@@ -14,7 +14,7 @@ import {
 import { LuLogOut } from "react-icons/lu";
 import {useCallback, useState, useEffect, useContext, useRef } from "react";
 import "./chat.css";
-import { signOut, auth,  collection, query, where, getDocs, db} from "../../config/firebase";
+import { signOut, auth,  collection, query, where, getDocs, db, addDoc, serverTimestamp} from "../../config/firebase";
 import User from "../../config/context/UserContext";
 
 function ChatPage() {
@@ -96,11 +96,11 @@ const [currentChat, setCurrentChat] = useState<any>({});
 const querySnapshot = await getDocs(q);
 querySnapshot.forEach((doc) => {
   // doc.data() is never undefined for query doc snapshots
-  usersList.push({...doc.data(), id: doc.id})
+  usersList.push({...doc.data()})
 });
 setUsers(usersList);
 
-let defaultChat: {full_name: string; email: string; password: string} = usersList[0];
+let defaultChat: {full_name: string; email: string; password: string, uid: string} = usersList[0];
 
 setCurrentChat(defaultChat);
 
@@ -110,15 +110,39 @@ setCurrentChat(defaultChat);
       callUsers();
     }, [])
 
-    let messageInputRef = useRef<HTMLInputElement | null>(null)
+    let messageInputRef = useRef<any>(null)
 
    useEffect(() => {
-    if (messageInputRef.current) {
       messageInputRef.current.focus(); // Automatically focus the input field
+    })
+    
+    let [messageInput, setMessageInput] = useState<string>("")
+
+    let chatID: string;
+
+    if (userID.uid < currentChat.id) {
+      chatID = `${userID.uid}${currentChat.uid}`;
     }
-   })
+    else {
+      chatID = `${currentChat.uid}${userID.uid}`
+    }
+    
 
+   const sendMessage = async (): Promise<void> => {
+    try {
+      const docRef = await addDoc(collection(db, "messages"), {
+            message: messageInput,
+            sentTime: new Date(),
+            sender: userID.uid,
+            receiver: currentChat.uid,
+            chatID,
+      });
+      console.log("Document written with ID: ", docRef.id);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
 
+   }
   
 
 
@@ -154,9 +178,9 @@ setCurrentChat(defaultChat);
           </ConversationHeader>
           <ConversationList>
           {users.map((user: any) => (
-            <Conversation key={user.id} onClick={() => {
+            <Conversation key={user.uid} onClick={() => {
               handleConversationClick();
-              setCurrentChat(user)
+              setCurrentChat(user);
             }}>
               <Avatar
                 src={`https://ui-avatars.com/api/?background=random&name=${user.full_name}`}
@@ -203,7 +227,7 @@ setCurrentChat(defaultChat);
               model={{
                 direction: "incoming",
                 message: "Hello my friend",
-                position: "single",
+                position: "last",
                 sender: "Zoe",
                 sentTime: "15 mins ago",
               }}
@@ -327,7 +351,7 @@ setCurrentChat(defaultChat);
             </Message>
           </MessageList>
 
-          <MessageInput attachButton={false} placeholder="Type message here" autoFocus ref={messageInputRef}/>
+          <MessageInput attachButton={false} placeholder="Type message here" ref={messageInputRef} onSend={sendMessage} onChange={(value) => setMessageInput(value)} />
         </ChatContainer>
       </MainContainer>
     </div>

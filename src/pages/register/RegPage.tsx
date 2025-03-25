@@ -22,6 +22,7 @@ const RegPage: React.FC = () => {
           full_name: values.full_name,
           email: values.email,
           password: values.password,
+          uid: user.uid
         });
 
       })
