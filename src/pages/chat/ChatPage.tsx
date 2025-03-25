@@ -12,7 +12,7 @@ import {
   Sidebar,
 } from "@chatscope/chat-ui-kit-react";
 import { LuLogOut } from "react-icons/lu";
-import {useCallback, useState, useEffect, useContext } from "react";
+import {useCallback, useState, useEffect, useContext, useRef } from "react";
 import "./chat.css";
 import { signOut, auth,  collection, query, where, getDocs, db} from "../../config/firebase";
 import User from "../../config/context/UserContext";
@@ -85,18 +85,8 @@ function ChatPage() {
 
     let [users, setUsers] = useState<any>([]);
 
-    
-interface ChatHeader {
-  full_name: string;
-  email: string;
-  password: string;
-}
 
-interface EmptyObject {
-
-}
-    
-const [defaultChatHeader, setDefaultChatHeader] = useState<ChatHeader | EmptyObject>({});
+const [currentChat, setCurrentChat] = useState<any>({});
 
     const callUsers = async (): Promise<void> => {
       const q = query(collection(db, "users"), where("email", "!=", userID.email));
@@ -112,13 +102,22 @@ setUsers(usersList);
 
 let defaultChat: {full_name: string; email: string; password: string} = usersList[0];
 
-setDefaultChatHeader(defaultChat);
+setCurrentChat(defaultChat);
 
     }
 
     useEffect(() => {
       callUsers();
     }, [])
+
+    let messageInputRef = useRef<HTMLInputElement | null>(null)
+
+   useEffect(() => {
+    if (messageInputRef.current) {
+      messageInputRef.current.focus(); // Automatically focus the input field
+    }
+   })
+
 
   
 
@@ -155,7 +154,10 @@ setDefaultChatHeader(defaultChat);
           </ConversationHeader>
           <ConversationList>
           {users.map((user: any) => (
-            <Conversation key={user.id} onClick={handleConversationClick}>
+            <Conversation key={user.id} onClick={() => {
+              handleConversationClick();
+              setCurrentChat(user)
+            }}>
               <Avatar
                 src={`https://ui-avatars.com/api/?background=random&name=${user.full_name}`}
                 style={conversationAvatarStyle}
@@ -178,7 +180,7 @@ setDefaultChatHeader(defaultChat);
               src="https://chatscope.io/storybook/react/assets/zoe-E7ZdmXF0.svg"
               status="available"
             />
-            <ConversationHeader.Content userName={(defaultChatHeader as ChatHeader).full_name} />
+            <ConversationHeader.Content userName={currentChat.full_name} />
           </ConversationHeader>
           <MessageList
             typingIndicator={<TypingIndicator content="Zoe is typing" />}
@@ -325,7 +327,7 @@ setDefaultChatHeader(defaultChat);
             </Message>
           </MessageList>
 
-          <MessageInput attachButton={false} placeholder="Type message here" />
+          <MessageInput attachButton={false} placeholder="Type message here" autoFocus ref={messageInputRef}/>
         </ChatContainer>
       </MainContainer>
     </div>
