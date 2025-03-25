@@ -85,6 +85,19 @@ function ChatPage() {
 
     let [users, setUsers] = useState<any>([]);
 
+    
+interface ChatHeader {
+  full_name: string;
+  email: string;
+  password: string;
+}
+
+interface EmptyObject {
+
+}
+    
+const [defaultChatHeader, setDefaultChatHeader] = useState<ChatHeader | EmptyObject>({});
+
     const callUsers = async (): Promise<void> => {
       const q = query(collection(db, "users"), where("email", "!=", userID.email));
       const usersList: any[] = [];
@@ -96,6 +109,11 @@ querySnapshot.forEach((doc) => {
   usersList.push({...doc.data(), id: doc.id})
 });
 setUsers(usersList);
+
+let defaultChat: {full_name: string; email: string; password: string} = usersList[0];
+
+setDefaultChatHeader(defaultChat);
+
     }
 
     useEffect(() => {
@@ -156,11 +174,11 @@ setUsers(usersList);
           <ConversationHeader>
             <ConversationHeader.Back onClick={handleBackClick} />
             <Avatar
-              name="Zoe"
+              name="fd"
               src="https://chatscope.io/storybook/react/assets/zoe-E7ZdmXF0.svg"
               status="available"
             />
-            <ConversationHeader.Content userName="Zoe" />
+            <ConversationHeader.Content userName={(defaultChatHeader as ChatHeader).full_name} />
           </ConversationHeader>
           <MessageList
             typingIndicator={<TypingIndicator content="Zoe is typing" />}
