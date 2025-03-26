@@ -9,8 +9,10 @@ import { auth, signInWithEmailAndPassword } from "../../config/firebase";
 
 const LoginPage: React.FC = () => {
 
+  // for displaying error on incorrect credentials
     let [errorMessage, setErrorMessage] = useState<boolean>(false);
 
+    // runs when the form is submitted
   const onFinish = (values: any) => {
     signInWithEmailAndPassword(auth, values.email, values.password)
     .then((userCredential) => {

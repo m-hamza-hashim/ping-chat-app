@@ -12,9 +12,9 @@ import {
   Sidebar,
 } from "@chatscope/chat-ui-kit-react";
 import { LuLogOut } from "react-icons/lu";
-import {useCallback, useState, useEffect, useContext, useRef, useLayoutEffect } from "react";
+import {useCallback, useState, useEffect, useContext, useRef} from "react";
 import "./chat.css";
-import { signOut, auth,  collection, query, where, getDocs, db, addDoc, serverTimestamp} from "../../config/firebase";
+import { signOut, auth,  collection, query, where, getDocs, db, addDoc, serverTimestamp, onSnapshot} from "../../config/firebase";
 import User from "../../config/context/UserContext";
 
 function ChatPage() {
@@ -67,7 +67,7 @@ function ChatPage() {
     setChatContainerStyle,
   ]);
 
-  
+  // runs when the user logs out
   const logoutFunc = (): void => {
     signOut(auth)
       .then(() => {
@@ -82,11 +82,13 @@ function ChatPage() {
 
 
     const {userID} = useContext(User);
+    
+    // for selecting the chat of a specific user
+    const [currentChat, setCurrentChat] = useState<any>({});
 
+    // for displaying the users list in sidebar
     let [users, setUsers] = useState<any>([]);
 
-
-const [currentChat, setCurrentChat] = useState<any>({});
 
     const callUsers = async (): Promise<void> => {
       const q = query(collection(db, "users"), where("email", "!=", userID.email));
@@ -110,40 +112,57 @@ setCurrentChat(defaultChat);
       callUsers();
     }, [])
 
+    // to bring auto-focus to message input field
     let messageInputRef = useRef<any>(null)
 
    useEffect(() => {
       messageInputRef.current.focus(); // Automatically focus the input field
     })
     
-    let [messageInput, setMessageInput] = useState<string>("")
-
+    
+    // for displaying the sent messages in the chat 
     interface MessageObject {
       message: string,
       id: string
     };
     
     let [messages, setMessages] = useState<MessageObject[]>([]);
-
+    
     let messagesList = useRef<MessageObject[]>([]);
 
-   const sendMessage = async (): Promise<void> => {
+     // for writing message to db
+    let [messageInput, setMessageInput] = useState<string>("")
 
-    let chatID: string;
+    const getChatID = () : string => {
+      let chatID: string;
 
     if (userID.uid < currentChat.uid) {
       chatID = `${userID.uid}${currentChat.uid}`;
+      return chatID;
     }
     else {
       chatID = `${currentChat.uid}${userID.uid}`
+      return chatID;
     }
+  };
+
+   const sendMessage = async (): Promise<void> => {
+
+    // let chatID: string;
+
+    // if (userID.uid < currentChat.uid) {
+    //   chatID = `${userID.uid}${currentChat.uid}`;
+    // }
+    // else {
+    //   chatID = `${currentChat.uid}${userID.uid}`
+    // }
     try {
       const docRef = await addDoc(collection(db, "messages"), {
             message: messageInput,
             sentTime: new Date(),
             sender: userID.uid,
             receiver: currentChat.uid,
-            chatID,
+            chatID: getChatID(),
       });
       messagesList.current.push({message: messageInput, id: docRef.id});
       setMessages(messagesList.current);
@@ -154,8 +173,18 @@ setCurrentChat(defaultChat);
 
    }
 
-  
-
+// for getting the messages with the current chat
+  useEffect(() => {
+    const q = query(collection(db, "messages"), where("chatID", "==", getChatID()));
+  const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    const messages = [];
+    querySnapshot.forEach((doc) => {
+        messages.push(doc.data().message);
+    });
+    setMessages(messages);
+  })
+  return () => unsubscribe(); 
+  }, [currentChat])
 
   return (
     <div style={{ height: "600px", position: "relative" }}>

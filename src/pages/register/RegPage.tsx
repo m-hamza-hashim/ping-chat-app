@@ -8,8 +8,10 @@ import { auth, createUserWithEmailAndPassword, setDoc, doc, db } from "../../con
 
 const RegPage: React.FC = () => {
 
+  // for displaying error due to incorrect credentials
   let [errorMessage, setErrorMessage] = useState<boolean>(false);
 
+  // runs when the form is submitted
   const onFinish = async (values: any) => {
     createUserWithEmailAndPassword(auth, values.email, values.password)
       .then(async (userCredential) => {
