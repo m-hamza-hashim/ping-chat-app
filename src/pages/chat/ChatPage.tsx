@@ -12,7 +12,7 @@ import {
   Sidebar,
 } from "@chatscope/chat-ui-kit-react";
 import { LuLogOut } from "react-icons/lu";
-import {useCallback, useState, useEffect, useContext, useRef } from "react";
+import {useCallback, useState, useEffect, useContext, useRef, useLayoutEffect } from "react";
 import "./chat.css";
 import { signOut, auth,  collection, query, where, getDocs, db, addDoc, serverTimestamp} from "../../config/firebase";
 import User from "../../config/context/UserContext";
@@ -118,17 +118,25 @@ setCurrentChat(defaultChat);
     
     let [messageInput, setMessageInput] = useState<string>("")
 
+    interface MessageObject {
+      message: string,
+      id: string
+    };
+    
+    let [messages, setMessages] = useState<MessageObject[]>([]);
+
+    let messagesList = useRef<MessageObject[]>([]);
+
+   const sendMessage = async (): Promise<void> => {
+
     let chatID: string;
 
-    if (userID.uid < currentChat.id) {
+    if (userID.uid < currentChat.uid) {
       chatID = `${userID.uid}${currentChat.uid}`;
     }
     else {
       chatID = `${currentChat.uid}${userID.uid}`
     }
-    
-
-   const sendMessage = async (): Promise<void> => {
     try {
       const docRef = await addDoc(collection(db, "messages"), {
             message: messageInput,
@@ -137,12 +145,15 @@ setCurrentChat(defaultChat);
             receiver: currentChat.uid,
             chatID,
       });
+      messagesList.current.push({message: messageInput, id: docRef.id});
+      setMessages(messagesList.current);
       console.log("Document written with ID: ", docRef.id);
     } catch (e) {
       console.error("Error adding document: ", e);
     }
 
    }
+
   
 
 
@@ -200,155 +211,28 @@ setCurrentChat(defaultChat);
           <ConversationHeader>
             <ConversationHeader.Back onClick={handleBackClick} />
             <Avatar
-              name="fd"
-              src="https://chatscope.io/storybook/react/assets/zoe-E7ZdmXF0.svg"
+              src={`https://ui-avatars.com/api/?background=random&name=${currentChat.full_name}`}
               status="available"
             />
-            <ConversationHeader.Content userName={currentChat.full_name} />
+            <ConversationHeader.Content userName={currentChat?.full_name} />
           </ConversationHeader>
           <MessageList
             typingIndicator={<TypingIndicator content="Zoe is typing" />}
           >
-            <Message
-              model={{
-                direction: "incoming",
-                message: "Hello my friend",
-                position: "single",
-                sender: "Zoe",
-                sentTime: "15 mins ago",
-              }}
-            >
-              <Avatar
-                name="Zoe"
-                src="https://chatscope.io/storybook/react/assets/zoe-E7ZdmXF0.svg"
-              />
-            </Message>
-            <Message
-              model={{
-                direction: "incoming",
-                message: "Hello my friend",
-                position: "last",
-                sender: "Zoe",
-                sentTime: "15 mins ago",
-              }}
-            >
-              <Avatar
-                name="Zoe"
-                src="https://chatscope.io/storybook/react/assets/zoe-E7ZdmXF0.svg"
-              />
-            </Message>
-            <Message
-              model={{
-                direction: "incoming",
-                message: "Hello my friend",
-                position: "single",
-                sender: "Zoe",
-                sentTime: "15 mins ago",
-              }}
-            >
-              <Avatar
-                name="Zoe"
-                src="https://chatscope.io/storybook/react/assets/zoe-E7ZdmXF0.svg"
-              />
-            </Message>
-            <Message
+            {messages.map(message => 
+              <Message id={message.id}
               model={{
                 direction: "outgoing",
-                message: "Hello my friend",
-                position: "single",
-                sender: "Zoe",
-                sentTime: "15 mins ago",
+                message: message.message,
               }}
             >
               <Avatar
-                name="Zoe"
-                src="https://chatscope.io/storybook/react/assets/zoe-E7ZdmXF0.svg"
+                name={userID.full_name}
+                src={`https://ui-avatars.com/api/?background=random&name=${userID.full_name}`}
               />
             </Message>
-            <Message
-              model={{
-                direction: "outgoing",
-                message: "Hello my friend",
-                position: "single",
-                sender: "Zoe",
-                sentTime: "15 mins ago",
-              }}
-            >
-              <Avatar
-                name="Zoe"
-                src="https://chatscope.io/storybook/react/assets/zoe-E7ZdmXF0.svg"
-              />
-            </Message>
-            <Message
-              model={{
-                direction: "outgoing",
-                message: "Hello my friend",
-                position: "single",
-                sender: "Zoe",
-                sentTime: "15 mins ago",
-              }}
-            >
-              <Avatar
-                name="Zoe"
-                src="https://chatscope.io/storybook/react/assets/zoe-E7ZdmXF0.svg"
-              />
-            </Message>
-            <Message
-              model={{
-                direction: "outgoing",
-                message: "Hello my friend",
-                position: "single",
-                sender: "Zoe",
-                sentTime: "15 mins ago",
-              }}
-            >
-              <Avatar
-                name="Zoe"
-                src="https://chatscope.io/storybook/react/assets/zoe-E7ZdmXF0.svg"
-              />
-            </Message>
-            <Message
-              model={{
-                direction: "outgoing",
-                message: "Hello my friend",
-                position: "single",
-                sender: "Zoe",
-                sentTime: "15 mins ago",
-              }}
-            >
-              <Avatar
-                name="Zoe"
-                src="https://chatscope.io/storybook/react/assets/zoe-E7ZdmXF0.svg"
-              />
-            </Message>
-            <Message
-              model={{
-                direction: "outgoing",
-                message: "Hello my friend",
-                position: "single",
-                sender: "Zoe",
-                sentTime: "15 mins ago",
-              }}
-            >
-              <Avatar
-                name="Zoe"
-                src="https://chatscope.io/storybook/react/assets/zoe-E7ZdmXF0.svg"
-              />
-            </Message>
-            <Message
-              model={{
-                direction: "outgoing",
-                message: "Hello my friend",
-                position: "single",
-                sender: "Zoe",
-                sentTime: "15 mins ago",
-              }}
-            >
-              <Avatar
-                name="Zoe"
-                src="https://chatscope.io/storybook/react/assets/zoe-E7ZdmXF0.svg"
-              />
-            </Message>
+            )}
+
           </MessageList>
 
           <MessageInput attachButton={false} placeholder="Type message here" ref={messageInputRef} onSend={sendMessage} onChange={(value) => setMessageInput(value)} />
