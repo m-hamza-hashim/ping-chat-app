@@ -14,7 +14,7 @@ import {
 import { LuLogOut } from "react-icons/lu";
 import {useCallback, useState, useEffect, useContext, useRef} from "react";
 import "./chat.css";
-import { signOut, auth,  collection, query, where, getDocs, db, addDoc, serverTimestamp, onSnapshot} from "../../config/firebase";
+import { signOut, orderBy, auth,  collection, query, where, getDocs, db, addDoc, serverTimestamp, onSnapshot} from "../../config/firebase";
 import User from "../../config/context/UserContext";
 
 function ChatPage() {
@@ -123,12 +123,17 @@ setCurrentChat(defaultChat);
     // for displaying the sent messages in the chat 
     interface MessageObject {
       message: string,
-      id: string
+      id: string,
+      sentTime: Date,
+      sender: string,
+      receiver: string,
+      chatID: string
+
     };
     
     let [messages, setMessages] = useState<MessageObject[]>([]);
     
-    let messagesList = useRef<MessageObject[]>([]);
+    // let messagesList = useRef<MessageObject[]>([]);
 
      // for writing message to db
     let [messageInput, setMessageInput] = useState<string>("")
@@ -145,8 +150,8 @@ setCurrentChat(defaultChat);
       return chatID;
     }
   };
-
-   const sendMessage = async (): Promise<void> => {
+  
+  const sendMessage = async (): Promise<void> => {
 
     // let chatID: string;
 
@@ -159,32 +164,41 @@ setCurrentChat(defaultChat);
     try {
       const docRef = await addDoc(collection(db, "messages"), {
             message: messageInput,
-            sentTime: new Date(),
+            sentTime: serverTimestamp(),
             sender: userID.uid,
             receiver: currentChat.uid,
             chatID: getChatID(),
       });
-      messagesList.current.push({message: messageInput, id: docRef.id});
-      setMessages(messagesList.current);
+      // messagesList.current.push({message: messageInput, 
+      //   id: docRef.id, 
+      //   sentTime: new Date(),
+      //   sender: userID.uid,
+      //   receiver: currentChat.uid,
+      //   chatID: getChatID()});
+      // setMessages(messagesList.current);
+      setDisplayMessages(null)
       console.log("Document written with ID: ", docRef.id);
     } catch (e) {
       console.error("Error adding document: ", e);
     }
 
-   }
-
-// for getting the messages with the current chat
+  }
+  
+  
+  // for getting the messages with the current chat
+  let [displayMessages, setDisplayMessages] = useState<null>(null)
+  
   useEffect(() => {
-    const q = query(collection(db, "messages"), where("chatID", "==", getChatID()));
+    const q = query(collection(db, "messages"), where("chatID", "==", getChatID()), orderBy("sentTime", "asc"));
   const unsubscribe = onSnapshot(q, (querySnapshot) => {
-    const messages = [];
+    const messages: MessageObject[] = [];
     querySnapshot.forEach((doc) => {
-        messages.push(doc.data().message);
+        messages.push({...doc.data(), id: doc.id});
     });
     setMessages(messages);
   })
   return () => unsubscribe(); 
-  }, [currentChat])
+  }, [currentChat, displayMessages])
 
   return (
     <div style={{ height: "600px", position: "relative" }}>
@@ -251,13 +265,13 @@ setCurrentChat(defaultChat);
             {messages.map(message => 
               <Message id={message.id}
               model={{
-                direction: "outgoing",
-                message: message.message,
+                direction: message.sender == userID.uid ? "outgoing" : "incoming",
+                // message: message.receiver == currentChat.uid ? message.message : null,
+                message: message.message
               }}
             >
               <Avatar
-                name={userID.full_name}
-                src={`https://ui-avatars.com/api/?background=random&name=${userID.full_name}`}
+                src={message.sender == userID.uid ? `https://ui-avatars.com/api/?background=random&name=${userID.full_name}` : `https://ui-avatars.com/api/?background=random&name=${currentChat.full_name}`}
               />
             </Message>
             )}
