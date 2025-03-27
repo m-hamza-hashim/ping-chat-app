@@ -10,11 +10,15 @@ import {
   ConversationList,
   Conversation,
   Sidebar,
+  VideoCallButton,
+  VoiceCallButton,
+  InfoButton,
+  Search
 } from "@chatscope/chat-ui-kit-react";
 import { LuLogOut } from "react-icons/lu";
 import {useCallback, useState, useEffect, useContext, useRef} from "react";
 import "./chat.css";
-import { signOut, orderBy, auth,  collection, query, where, getDocs, db, addDoc, serverTimestamp, onSnapshot} from "../../config/firebase";
+import { signOut, orderBy, auth, doc, updateDoc, collection, query, where, getDocs, db, addDoc, serverTimestamp, onSnapshot} from "../../config/firebase";
 import User from "../../config/context/UserContext";
 
 function ChatPage() {
@@ -90,50 +94,61 @@ function ChatPage() {
     let [users, setUsers] = useState<any>([]);
 
 
-    const callUsers = async (): Promise<void> => {
-      const q = query(collection(db, "users"), where("email", "!=", userID.email));
-      const usersList: any[] = [];
+//     const callUsers = async (): Promise<void> => {
+//       const q = query(collection(db, "users"), where("email", "!=", userID.email));
+//       const usersList: any[] = [];
       
 
-const querySnapshot = await getDocs(q);
-querySnapshot.forEach((doc) => {
-  // doc.data() is never undefined for query doc snapshots
-  usersList.push({...doc.data()})
+// const querySnapshot = await getDocs(q);
+// querySnapshot.forEach((doc) => {
+//   usersList.push({...doc.data()})
+// });
+// setUsers(usersList);
+
+// let defaultChat: {full_name: string; email: string; password: string, uid: string} = usersList[0];
+
+// setCurrentChat(defaultChat);
+
+//     }
+
+//     useEffect(() => {
+//       callUsers();
+//     }, [])
+
+interface UsersListObject {
+  full_name: string;
+   email: string;
+    password: string;
+     uid: string;
+      last_message: string
+};
+
+let defaultChatRef = useRef<boolean>(true);
+
+useEffect(() => {
+  const q = query(collection(db, "users"), where("email", "!=", userID.email));
+const unsubscribe = onSnapshot(q, (querySnapshot) => {
+  const usersList = [];
+  querySnapshot.forEach((doc) => {
+      usersList.push({...doc.data()});
+  });
+  setUsers(usersList);
+  if (defaultChatRef.current) {
+    let defaultChat: UsersListObject[] = usersList[0];
+    setCurrentChat(defaultChat);
+    defaultChatRef.current = false;
+  }
 });
-setUsers(usersList);
-
-let defaultChat: {full_name: string; email: string; password: string, uid: string} = usersList[0];
-
-setCurrentChat(defaultChat);
-
-    }
-
-    useEffect(() => {
-      callUsers();
-    }, [])
+}, [])
 
     // to bring auto-focus to message input field
     let messageInputRef = useRef<any>(null)
 
    useEffect(() => {
-      messageInputRef.current.focus(); // Automatically focus the input field
+      messageInputRef.current.focus(); 
     })
     
     
-    // for displaying the sent messages in the chat 
-    interface MessageObject {
-      message: string,
-      id: string,
-      sentTime: Date,
-      sender: string,
-      receiver: string,
-      chatID: string
-
-    };
-    
-    let [messages, setMessages] = useState<MessageObject[]>([]);
-    
-    // let messagesList = useRef<MessageObject[]>([]);
 
      // for writing message to db
     let [messageInput, setMessageInput] = useState<string>("")
@@ -141,26 +156,18 @@ setCurrentChat(defaultChat);
     const getChatID = () : string => {
       let chatID: string;
 
-    if (userID.uid < currentChat.uid) {
-      chatID = `${userID.uid}${currentChat.uid}`;
+    if (userID.uid < currentChat?.uid) {
+      chatID = `${userID.uid}${currentChat?.uid}`;
       return chatID;
     }
     else {
-      chatID = `${currentChat.uid}${userID.uid}`
+      chatID = `${currentChat?.uid}${userID.uid}`
       return chatID;
     }
   };
   
   const sendMessage = async (): Promise<void> => {
 
-    // let chatID: string;
-
-    // if (userID.uid < currentChat.uid) {
-    //   chatID = `${userID.uid}${currentChat.uid}`;
-    // }
-    // else {
-    //   chatID = `${currentChat.uid}${userID.uid}`
-    // }
     try {
       const docRef = await addDoc(collection(db, "messages"), {
             message: messageInput,
@@ -169,15 +176,26 @@ setCurrentChat(defaultChat);
             receiver: currentChat.uid,
             chatID: getChatID(),
       });
-      // messagesList.current.push({message: messageInput, 
-      //   id: docRef.id, 
-      //   sentTime: new Date(),
-      //   sender: userID.uid,
-      //   receiver: currentChat.uid,
-      //   chatID: getChatID()});
-      // setMessages(messagesList.current);
       setDisplayMessages(null)
       console.log("Document written with ID: ", docRef.id);
+
+      const userIDRef = doc(db, "users", userID.uid);
+
+// Set the "capital" field of the city 'DC'
+await updateDoc(userIDRef, {
+  last_message: messageInput,
+  last_sender: userID.full_name
+})
+
+      const currentUserRef = doc(db, "users", currentChat.uid);
+
+// Set the "capital" field of the city 'DC'
+await updateDoc(currentUserRef, {
+  last_message: messageInput,
+  last_sender: userID.full_name
+})
+
+
     } catch (e) {
       console.error("Error adding document: ", e);
     }
@@ -186,8 +204,20 @@ setCurrentChat(defaultChat);
   
   
   // for getting the messages with the current chat
-  let [displayMessages, setDisplayMessages] = useState<null>(null)
+  interface MessageObject {
+    message: string,
+    id: string,
+    sentTime: Date,
+    sender: string,
+    receiver: string,
+    chatID: string
+
+  };
   
+  let [messages, setMessages] = useState<MessageObject[]>([]);
+  
+  let [displayMessages, setDisplayMessages] = useState<null>(null)
+
   useEffect(() => {
     const q = query(collection(db, "messages"), where("chatID", "==", getChatID()), orderBy("sentTime", "asc"));
   const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -216,8 +246,7 @@ setCurrentChat(defaultChat);
         >
           <ConversationHeader>
             <ConversationHeader.Actions onClick={logoutFunc}>
-              <LuLogOut size={27} color="#008eff" />{" "}
-              {/* Custom Button will appear here */}
+              <LuLogOut size={27} color="#008eff" />
             </ConversationHeader.Actions>
             <Avatar
               src={`https://ui-avatars.com/api/?background=random&name=${userID.full_name}`}
@@ -230,9 +259,10 @@ setCurrentChat(defaultChat);
               </span>
             </ConversationHeader.Content>
           </ConversationHeader>
+          <Search placeholder="Search..." />
           <ConversationList>
           {users.map((user: any) => (
-            <Conversation key={user.uid} onClick={() => {
+            <Conversation active={user.uid === currentChat.uid ? "true" : false} key={user.uid} onClick={() => {
               handleConversationClick();
               setCurrentChat(user);
             }}>
@@ -242,9 +272,10 @@ setCurrentChat(defaultChat);
               />
               <Conversation.Content
                 name={user.full_name}
-                lastSenderName="Lilly"
-                info="fdsfdsfdsf"
+                lastSenderName={user.last_sender === userID.full_name ? "You" : user.last_sender}
+                info={user.last_message}
                 style={conversationContentStyle}
+                active="false"
               />
             </Conversation>
           ))}
@@ -254,10 +285,15 @@ setCurrentChat(defaultChat);
           <ConversationHeader>
             <ConversationHeader.Back onClick={handleBackClick} />
             <Avatar
-              src={`https://ui-avatars.com/api/?background=random&name=${currentChat.full_name}`}
+              src={`https://ui-avatars.com/api/?background=random&name=${currentChat?.full_name}`}
               status="available"
             />
             <ConversationHeader.Content userName={currentChat?.full_name} />
+            <ConversationHeader.Actions>
+        <VoiceCallButton />
+        <VideoCallButton />
+        <InfoButton />
+      </ConversationHeader.Actions>
           </ConversationHeader>
           <MessageList
             typingIndicator={<TypingIndicator content="Zoe is typing" />}
@@ -266,7 +302,6 @@ setCurrentChat(defaultChat);
               <Message id={message.id}
               model={{
                 direction: message.sender == userID.uid ? "outgoing" : "incoming",
-                // message: message.receiver == currentChat.uid ? message.message : null,
                 message: message.message
               }}
             >
@@ -278,7 +313,7 @@ setCurrentChat(defaultChat);
 
           </MessageList>
 
-          <MessageInput attachButton={false} placeholder="Type message here" ref={messageInputRef} onSend={sendMessage} onChange={(value) => setMessageInput(value)} />
+          <MessageInput placeholder="Type message here" ref={messageInputRef} onSend={sendMessage} onChange={(value) => setMessageInput(value)} />
         </ChatContainer>
       </MainContainer>
     </div>

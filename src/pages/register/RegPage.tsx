@@ -23,7 +23,6 @@ const RegPage: React.FC = () => {
         await setDoc(doc(db, "users", user.uid), {
           full_name: values.full_name,
           email: values.email,
-          password: values.password,
           uid: user.uid
         });
 
