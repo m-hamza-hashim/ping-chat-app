@@ -171,7 +171,6 @@ const unsubscribe = onSnapshot(q, (querySnapshot) => {
             receiver: currentChat.uid,
             chatID: getChatID(currentChat),
       });
-      // setDisplayMessages(null)
       console.log("Document written with ID: ", docRef.id);
 
 const userIDRef = doc(db, "users", userID.uid);
@@ -212,7 +211,6 @@ await updateDoc(currentUserRef, {
   
   let [messages, setMessages] = useState<MessageObject[]>([]);
   
-  // let [displayMessages, setDisplayMessages] = useState<null>(null)
 
   useEffect(() => {
     const q = query(collection(db, "messages"), where("chatID", "==", getChatID(currentChat)), orderBy("sentTime", "asc"));
@@ -224,7 +222,6 @@ await updateDoc(currentUserRef, {
     setMessages(messages);
   })
   return () => unsubscribe(); 
-  // }, [currentChat, displayMessages])
   }, [currentChat])
 
   return (
