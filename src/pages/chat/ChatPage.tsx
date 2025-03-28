@@ -93,34 +93,21 @@ function ChatPage() {
     // for displaying the users list in sidebar
     let [users, setUsers] = useState<any>([]);
 
-
-//     const callUsers = async (): Promise<void> => {
-//       const q = query(collection(db, "users"), where("email", "!=", userID.email));
-//       const usersList: any[] = [];
-      
-
-// const querySnapshot = await getDocs(q);
-// querySnapshot.forEach((doc) => {
-//   usersList.push({...doc.data()})
-// });
-// setUsers(usersList);
-
-// let defaultChat: {full_name: string; email: string; password: string, uid: string} = usersList[0];
-
-// setCurrentChat(defaultChat);
-
-//     }
-
-//     useEffect(() => {
-//       callUsers();
-//     }, [])
+    interface LMChatID {
+      last_message: string;
+      sender: string
+    }
+  
+    interface LastMessages {
+      chatID : LMChatID;
+    }
+  
 
 interface UsersListObject {
   full_name: string;
    email: string;
-    password: string;
      uid: string;
-      last_message: string
+      last_messages?: LastMessages;
 };
 
 let defaultChatRef = useRef<boolean>(true);
@@ -153,15 +140,22 @@ const unsubscribe = onSnapshot(q, (querySnapshot) => {
      // for writing message to db
     let [messageInput, setMessageInput] = useState<string>("")
 
-    const getChatID = () : string => {
+  interface OtherChatObject {
+    email: string;
+    full_name: string;
+    uid: string;
+    last_messages?: LastMessages
+  }
+  
+    const getChatID = (otherChat: OtherChatObject) : string => {
       let chatID: string;
 
-    if (userID.uid < currentChat?.uid) {
-      chatID = `${userID.uid}${currentChat?.uid}`;
+    if (userID.uid < otherChat?.uid) {
+      chatID = `${userID.uid}${otherChat?.uid}`;
       return chatID;
     }
     else {
-      chatID = `${currentChat?.uid}${userID.uid}`
+      chatID = `${otherChat?.uid}${userID.uid}`
       return chatID;
     }
   };
@@ -174,26 +168,27 @@ const unsubscribe = onSnapshot(q, (querySnapshot) => {
             sentTime: serverTimestamp(),
             sender: userID.uid,
             receiver: currentChat.uid,
-            chatID: getChatID(),
+            chatID: getChatID(currentChat),
       });
       setDisplayMessages(null)
       console.log("Document written with ID: ", docRef.id);
 
-      const userIDRef = doc(db, "users", userID.uid);
-
-// Set the "capital" field of the city 'DC'
+const userIDRef = doc(db, "users", userID.uid);
 await updateDoc(userIDRef, {
-  last_message: messageInput,
-  last_sender: userID.full_name
-})
+  [`last_messages.${getChatID(currentChat)}`]: {
+    last_message: messageInput,
+    sender: userID.full_name
+  },
+});
 
       const currentUserRef = doc(db, "users", currentChat.uid);
 
-// Set the "capital" field of the city 'DC'
 await updateDoc(currentUserRef, {
-  last_message: messageInput,
-  last_sender: userID.full_name
-})
+  [`last_messages.${getChatID(currentChat)}`]: {
+    last_message: messageInput,
+    sender: userID.full_name
+  },
+});
 
 
     } catch (e) {
@@ -219,7 +214,7 @@ await updateDoc(currentUserRef, {
   let [displayMessages, setDisplayMessages] = useState<null>(null)
 
   useEffect(() => {
-    const q = query(collection(db, "messages"), where("chatID", "==", getChatID()), orderBy("sentTime", "asc"));
+    const q = query(collection(db, "messages"), where("chatID", "==", getChatID(currentChat)), orderBy("sentTime", "asc"));
   const unsubscribe = onSnapshot(q, (querySnapshot) => {
     const messages: MessageObject[] = [];
     querySnapshot.forEach((doc) => {
@@ -262,7 +257,7 @@ await updateDoc(currentUserRef, {
           <Search placeholder="Search..." />
           <ConversationList>
           {users.map((user: any) => (
-            <Conversation active={user.uid === currentChat.uid ? "true" : false} key={user.uid} onClick={() => {
+            <Conversation active={user.uid === currentChat.uid ? true : false} key={user.uid} onClick={() => {
               handleConversationClick();
               setCurrentChat(user);
             }}>
@@ -271,9 +266,25 @@ await updateDoc(currentUserRef, {
                 style={conversationAvatarStyle}
               />
               <Conversation.Content
+
                 name={user.full_name}
-                lastSenderName={user.last_sender === userID.full_name ? "You" : user.last_sender}
-                info={user.last_message}
+
+                lastSenderName={
+                  user.last_messages && 
+                  user.last_messages[getChatID(user)] 
+                    ? (user.last_messages[getChatID(user)].sender === userID.full_name 
+                      ? "You" 
+                      : user.last_messages[getChatID(user)].sender)
+                    : "New connection"
+                }
+                info={
+                  user.last_messages && 
+                  user.last_messages[getChatID(user)] 
+                    ? user.last_messages[getChatID(user)].last_message
+                    : "Break the ice"
+                }
+ 
+                
                 style={conversationContentStyle}
                 active="false"
               />
