@@ -1,3 +1,11 @@
 .header-title {
     font-weight: bold;
 }
+
+.cs-message--outgoing .cs-message__sent-time {
+    display: block;
+}
+
+.cs-message--incoming .cs-message__sent-time {
+    display: block;
+}

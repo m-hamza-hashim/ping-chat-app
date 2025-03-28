@@ -18,8 +18,9 @@ import {
 import { LuLogOut } from "react-icons/lu";
 import {useCallback, useState, useEffect, useContext, useRef} from "react";
 import "./chat.css";
-import { signOut, orderBy, auth, doc, updateDoc, collection, query, where, getDocs, db, addDoc, serverTimestamp, onSnapshot} from "../../config/firebase";
+import { signOut, orderBy, auth, doc, updateDoc, collection, query, where, db, addDoc, serverTimestamp, onSnapshot} from "../../config/firebase";
 import User from "../../config/context/UserContext";
+import { formatDistanceToNow } from "date-fns";
 
 function ChatPage() {
   const [sidebarVisible, setSidebarVisible] = useState(false);
@@ -170,7 +171,7 @@ const unsubscribe = onSnapshot(q, (querySnapshot) => {
             receiver: currentChat.uid,
             chatID: getChatID(currentChat),
       });
-      setDisplayMessages(null)
+      // setDisplayMessages(null)
       console.log("Document written with ID: ", docRef.id);
 
 const userIDRef = doc(db, "users", userID.uid);
@@ -211,7 +212,7 @@ await updateDoc(currentUserRef, {
   
   let [messages, setMessages] = useState<MessageObject[]>([]);
   
-  let [displayMessages, setDisplayMessages] = useState<null>(null)
+  // let [displayMessages, setDisplayMessages] = useState<null>(null)
 
   useEffect(() => {
     const q = query(collection(db, "messages"), where("chatID", "==", getChatID(currentChat)), orderBy("sentTime", "asc"));
@@ -223,7 +224,8 @@ await updateDoc(currentUserRef, {
     setMessages(messages);
   })
   return () => unsubscribe(); 
-  }, [currentChat, displayMessages])
+  // }, [currentChat, displayMessages])
+  }, [currentChat])
 
   return (
     <div style={{ height: "600px", position: "relative" }}>
@@ -313,12 +315,21 @@ await updateDoc(currentUserRef, {
               <Message id={message.id}
               model={{
                 direction: message.sender == userID.uid ? "outgoing" : "incoming",
-                message: message.message
+                message: message.message,
               }}
             >
               <Avatar
                 src={message.sender == userID.uid ? `https://ui-avatars.com/api/?background=random&name=${userID.full_name}` : `https://ui-avatars.com/api/?background=random&name=${currentChat.full_name}`}
               />
+                          <Message.Footer
+    sender="Emily"
+    // sentTime={formatRelative(new Date(), new Date(message.sentTime), { addSuffix: true })}
+    // sentTime={formatDistanceToNow(new Date(message.sentTime.toDate()), { addSuffix: true })}
+    
+    sentTime={message.sentTime ? 
+      formatDistanceToNow(new Date(message.sentTime.toDate()), { addSuffix: true }) : 
+      "Sending..."}
+  />
             </Message>
             )}
 
