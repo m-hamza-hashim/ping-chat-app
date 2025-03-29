@@ -319,12 +319,9 @@ await updateDoc(currentUserRef, {
                 src={message.sender == userID.uid ? `https://ui-avatars.com/api/?background=random&name=${userID.full_name}` : `https://ui-avatars.com/api/?background=random&name=${currentChat.full_name}`}
               />
                           <Message.Footer
-    sender="Emily"
-    // sentTime={formatRelative(new Date(), new Date(message.sentTime), { addSuffix: true })}
-    // sentTime={formatDistanceToNow(new Date(message.sentTime.toDate()), { addSuffix: true })}
+
     
-    sentTime={message.sentTime ? 
-      formatDistanceToNow(new Date(message.sentTime.toDate()), { addSuffix: true }) : 
+    sentTime={message.sentTime ? `Sent ${formatDistanceToNow(new Date(message.sentTime.toDate()), { addSuffix: true })}` : 
       "Sending..."}
   />
             </Message>
