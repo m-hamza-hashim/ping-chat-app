@@ -232,47 +232,22 @@ function ChatPage() {
     return () => unsubscribe();
   }, [currentChat]);
 
-  const [pinCode, setPinCode] = useState("");
+  // for typing functionality
+
+  const [pinCode, setPinCode] = useState<string>("");
 
   const typingFlag = useRef<boolean>(true);
 
   useEffect(() => {
     const getData = setTimeout(async () => {
-      console.log("end");
-
-      // const currentUserRef = doc(db, "users", currentChat.uid);
-
-      // await updateDoc(currentUserRef, {
-      //   [`typing_indicator.${getChatID(currentChat)}`]: {
-      //     typing: false
-      //   },
-      // });
 
       const userIDRef = doc(db, "users", userID.uid);
 
       await updateDoc(userIDRef, {
         [`typing_indicator.${getChatID(currentChat)}`]: {
           typing: false,
-          // typer: userID.full_name
         },
       });
-
-      // const currentUserRef = doc(db, "users", currentChat.uid);
-
-      // await updateDoc(currentUserRef, {
-      //   [`typing_indicator.${getChatID(currentChat)}`]: {
-      //     typing: false,
-      //     // typer: currentChat.full_name
-      //   },
-      // });
-
-      // const userIDRef = doc(db, "users", userID.uid);
-
-      // await updateDoc(userIDRef, {
-      //   [`typing_indicator.${getChatID(currentChat)}`]: {
-      //     typing: false
-      //   },
-      // });
 
       typingFlag.current = true;
     }, 2000);
@@ -280,13 +255,10 @@ function ChatPage() {
     return () => clearTimeout(getData);
   }, [pinCode]);
 
-  const isTyping = useRef(false);
-
-  // let isTypingContent = useRef(null);
+  const isTyping = useRef<boolean>(false);
 
   useEffect(() => {
     if (currentChat.email) {
-      // const q = query(collection(db, "users"), where('email', 'in', [userID.email, currentChat.email]));
       const q = query(
         collection(db, "users"),
         where("email", "==", currentChat.email)
@@ -296,13 +268,9 @@ function ChatPage() {
         querySnapshot.forEach((doc) => {
           usersList.push({ ...doc.data() });
         });
-        // isTyping.current = usersList[0].typing_indicator[getChatID(currentChat)];
         isTyping.current =
           usersList[0].typing_indicator[getChatID(currentChat)]?.typing ||
           false;
-        // isTypingContent.current = usersList;
-
-        console.log(isTyping);
       });
 
       return () => unsubscribe();
@@ -434,34 +402,17 @@ function ChatPage() {
             onSend={sendMessage}
             onChange={async (value) => {
               if (typingFlag.current) {
-                // const userIDRef = doc(db, "users", u.uid);
-                console.log("start");
-
                 typingFlag.current = false;
 
-                // await updateDoc(userIDRef, {
-                //   [`typing_indicator.${getChatID(currentChat)}`]: {
-                //     typing: true
-                //   },
-                // });
+  
 
                 const userIDRef = doc(db, "users", userID.uid);
 
                 await updateDoc(userIDRef, {
                   [`typing_indicator.${getChatID(currentChat)}`]: {
                     typing: true,
-                    // typer: userID.full_name
                   },
                 });
-
-                // const currentUserRef = doc(db, "users", currentChat.uid);
-
-                // await updateDoc(currentUserRef, {
-                //   [`typing_indicator.${getChatID(currentChat)}`]: {
-                //     typing: true,
-                //     typer: userID.full_name
-                //   },
-                // });
               }
               setPinCode(value);
               setMessageInput(value);
