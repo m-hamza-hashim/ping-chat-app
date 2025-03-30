@@ -15,8 +15,10 @@ import {
   InfoButton,
   Search,
 } from "@chatscope/chat-ui-kit-react";
+import { Modal, Result } from 'antd';
 import { LuLogOut } from "react-icons/lu";
 import { useCallback, useState, useEffect, useContext, useRef } from "react";
+import { useNetwork } from 'react-haiku';
 import "./chat.css";
 import {
   signOut,
@@ -35,7 +37,6 @@ import {
 } from "../../config/firebase";
 import User from "../../config/context/UserContext";
 import { formatDistanceToNow } from "date-fns";
-import NetworkAlert from "../../components/NetworkAlert";
 
 function ChatPage() {
   const [sidebarVisible, setSidebarVisible] = useState(false);
@@ -89,6 +90,19 @@ function ChatPage() {
 
   // bringing the global state of logged-in user
   const { userID } = useContext(User);
+
+
+
+// for network alert
+
+
+
+const networkAvailable = useNetwork();
+
+
+
+
+
 
 // checking user is online or offline
 
@@ -356,6 +370,20 @@ setUsers(usersArray);
 
   return (
     <div style={{ height: "600px", position: "relative" }}>
+      <Modal
+                // title="Network Connection Issue"
+                open={!networkAvailable} // <-- Use the calculated boolean
+                closable={false}              // User cannot close it manually
+                maskClosable={false}          // Cannot close by clicking outside
+                footer={null}                 // No OK/Cancel buttons needed
+                centered                      // Position nicely
+             >
+                <Result
+    status="warning"
+    title="Oops! The Internet Is On Vacation."
+   
+  />
+             </Modal>
       <MainContainer
         responsive
         style={{
