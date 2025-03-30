@@ -371,12 +371,12 @@ setUsers(usersArray);
   return (
     <div style={{ height: "600px", position: "relative" }}>
       <Modal
-                // title="Network Connection Issue"
-                open={!networkAvailable} // <-- Use the calculated boolean
-                closable={false}              // User cannot close it manually
-                maskClosable={false}          // Cannot close by clicking outside
-                footer={null}                 // No OK/Cancel buttons needed
-                centered                      // Position nicely
+
+                open={!networkAvailable}
+                closable={false}            
+                maskClosable={false}          
+                footer={null}             
+                centered                      
              >
                 <Result
     status="warning"
