@@ -239,26 +239,28 @@ function ChatPage() {
   const typingFlag = useRef<boolean>(true);
 
   useEffect(() => {
-    const getData = setTimeout(async () => {
-
-      const userIDRef = doc(db, "users", userID.uid);
-
-      await updateDoc(userIDRef, {
-        [`typing_indicator.${getChatID(currentChat)}`]: {
-          typing: false,
-        },
-      });
-
-      typingFlag.current = true;
-    }, 2000);
-
-    return () => clearTimeout(getData);
+    if (currentChat?.email) {
+      const getData = setTimeout(async () => {
+  
+        const userIDRef = doc(db, "users", userID.uid);
+  
+        await updateDoc(userIDRef, {
+          [`typing_indicator.${getChatID(currentChat)}`]: {
+            typing: false,
+          },
+        });
+  
+        typingFlag.current = true;
+      }, 2000);
+  
+      return () => clearTimeout(getData);
+    }
   }, [pinCode]);
 
   const isTyping = useRef<boolean>(false);
 
   useEffect(() => {
-    if (currentChat.email) {
+    if (currentChat?.email) {
       const q = query(
         collection(db, "users"),
         where("email", "==", currentChat.email)
@@ -269,7 +271,7 @@ function ChatPage() {
           usersList.push({ ...doc.data() });
         });
         isTyping.current =
-          usersList[0].typing_indicator[getChatID(currentChat)]?.typing ||
+          usersList[0]?.typing_indicator?.[getChatID(currentChat)]?.typing ||
           false;
       });
 
