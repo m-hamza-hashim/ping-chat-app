@@ -4,7 +4,6 @@ import { Button, Checkbox, Form, Input, Flex, message } from "antd";
 import { Link } from "react-router";
 import "./register.css";
 import { auth, createUserWithEmailAndPassword, setDoc, doc, db } from "../../config/firebase";
-import NetworkAlert from "../../components/NetworkAlert";
 
 
 const RegPage: React.FC = () => {
@@ -52,7 +51,6 @@ const RegPage: React.FC = () => {
 
   return (
     <div className="reg-big-box">
-      <NetworkAlert />
       <div className="reg-main-box">
       {contextHolder}
         <Form

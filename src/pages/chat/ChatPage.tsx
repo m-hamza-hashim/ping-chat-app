@@ -35,6 +35,7 @@ import {
 } from "../../config/firebase";
 import User from "../../config/context/UserContext";
 import { formatDistanceToNow } from "date-fns";
+import NetworkAlert from "../../components/NetworkAlert";
 
 function ChatPage() {
   const [sidebarVisible, setSidebarVisible] = useState(false);
@@ -90,68 +91,6 @@ function ChatPage() {
   const { userID } = useContext(User);
 
 // checking user is online or offline
-
-// let isOnline = useRef<boolean>(false);
-
-// const setOnline = async () :Promise<void> => {
-//   const onlineRef = doc(db, "users", userID.uid);
-  
-//   await updateDoc(onlineRef, {
-//     online_indicator: true
-//   }); 
-// };
-
-// useEffect(() => {
-//   if (!isOnline.current && !isOffline.current) {
-//     isOnline.current = true;
-//     setOnline();
-//   }
-// });
-
-//   const setOffline = async () : Promise<void> => {
-//     const onlineRef = doc(db, "users", userID.uid);
-
-//     await updateDoc(onlineRef, {
-// online_indicator: false
-// }); 
-
-// isOffline.current = true;
-// logoutFunc();
-//   };
-
-
-//   let isOffline = useRef<boolean>(false);
-
-  // const logoutFunc = (): void => {
-  //   isOnline.current = false;
-  //   if (!isOffline.current) {
-  //     setOffline();
-
-  //   }
-
-  // if(isOffline.current) {
-  //   isOffline.current = false;
-  //   signOut(auth)
-  //     .then(() => {
-  //       // Sign-out successful.
-  //       console.log("signed out");
-  //     })
-  //     .catch((error) => {
-  //       // An error happened.
-  //       console.log("error ---> ", error);
-  //     });
-  // }
-  // };
-
-
-
-
-
-
-
-
-
-
 
   let isOnline = useRef<boolean>(false);
 
