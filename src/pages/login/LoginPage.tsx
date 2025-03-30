@@ -11,7 +11,7 @@ const LoginPage: React.FC = () => {
 
   // for displaying error on incorrect credentials
     let [errorMessage, setErrorMessage] = useState<boolean>(false);
-      const [messageApi] = message.useMessage();
+      const [messageApi, contextHolder] = message.useMessage();
     
       const success = () => {
         messageApi.open({
@@ -42,6 +42,7 @@ const LoginPage: React.FC = () => {
     return (
       <div className="log-big-box">
       <div className="log-main-box">
+        {contextHolder}
       <Form
         name="login"
         initialValues={{ remember: true }}

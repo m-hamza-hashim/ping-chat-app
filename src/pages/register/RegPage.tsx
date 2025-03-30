@@ -4,13 +4,14 @@ import { Button, Checkbox, Form, Input, Flex, message } from "antd";
 import { Link } from "react-router";
 import "./register.css";
 import { auth, createUserWithEmailAndPassword, setDoc, doc, db } from "../../config/firebase";
+import NetworkAlert from "../../components/NetworkAlert";
 
 
 const RegPage: React.FC = () => {
 
   // for displaying error due to incorrect credentials
   let [errorMessage, setErrorMessage] = useState<boolean>(false);
-  const [messageApi] = message.useMessage();
+  const [messageApi, contextHolder] = message.useMessage();
 
   const success = () => {
     messageApi.open({
@@ -51,7 +52,9 @@ const RegPage: React.FC = () => {
 
   return (
     <div className="reg-big-box">
+      <NetworkAlert />
       <div className="reg-main-box">
+      {contextHolder}
         <Form
           name="login"
           initialValues={{ remember: true }}
