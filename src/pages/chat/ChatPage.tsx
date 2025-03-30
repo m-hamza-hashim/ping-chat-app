@@ -26,6 +26,7 @@ import {
   updateDoc,
   collection,
   query,
+  getDocs,
   where,
   db,
   addDoc,
@@ -115,20 +116,28 @@ function ChatPage() {
     chatID: LMChatID;
   }
 
+  interface TIChatID {
+    typing: boolean;
+  }
+
+  interface TypingIndicator {
+    chatID: TIChatID;
+  }
+
   interface UsersListObject {
     full_name: string;
     email: string;
     uid: string;
     last_messages?: LastMessages;
+    typing_indicator?: TypingIndicator
   }
 
   let defaultChatRef = useRef<boolean>(true);
 
   useEffect(() => {
-    const q = query(
-      collection(db, "users"),
-      where("email", "!=", userID.email)
-    );
+    const prefix = searchingDebounce;
+    const endPrefix = prefix + '\uf8ff';
+    const q = query(collection(db, "users"), where("full_name", ">=", prefix), where("full_name", "<", endPrefix), where("email", "!=", userID.email));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const usersList = [];
       querySnapshot.forEach((doc) => {
@@ -146,21 +155,17 @@ function ChatPage() {
   // to bring auto-focus to message input field
   let messageInputRef = useRef<any>(null);
 
+  let searchingIndicator = useRef<boolean>(false);
+
   useEffect(() => {
+    if (!searchingIndicator.current)
     messageInputRef.current.focus();
   });
 
   // for writing message to db
   let [messageInput, setMessageInput] = useState<string>("");
 
-  interface OtherChatObject {
-    email: string;
-    full_name: string;
-    uid: string;
-    last_messages?: LastMessages;
-  }
-
-  const getChatID = (otherChat: OtherChatObject): string => {
+  const getChatID = (otherChat: UsersListObject): string => {
     let chatID: string;
 
     if (userID.uid < otherChat?.uid) {
@@ -234,7 +239,7 @@ function ChatPage() {
 
   // for typing functionality
 
-  const [pinCode, setPinCode] = useState<string>("");
+  const [typingDebounce, setTypingDebounce] = useState<string>("");
 
   const typingFlag = useRef<boolean>(true);
 
@@ -255,7 +260,7 @@ function ChatPage() {
   
       return () => clearTimeout(getData);
     }
-  }, [pinCode]);
+  }, [typingDebounce]);
 
   const isTyping = useRef<boolean>(false);
 
@@ -278,6 +283,28 @@ function ChatPage() {
       return () => unsubscribe();
     }
   }, [currentChat]);
+
+  // for searching 
+
+  const [searchingDebounce, setSearchingDebounce] = useState<string>("");
+
+ useEffect(() => {
+    const searchUser = setTimeout(async () => {
+      const prefix = searchingDebounce;
+      const endPrefix = prefix + '\uf8ff';
+      const q = query(collection(db, "users"), where("full_name", ">=", prefix), where("full_name", "<", endPrefix), where("email", "!=", userID.email));
+      let usersArray: UsersListObject[] = [];
+const querySnapshot = await getDocs(q);
+querySnapshot.forEach((doc) => {
+  usersArray.push(doc.data());
+
+
+});
+setUsers(usersArray);
+    }, 1000)
+
+    return () => clearTimeout(searchUser)
+  }, [searchingDebounce])
 
   return (
     <div style={{ height: "600px", position: "relative" }}>
@@ -305,15 +332,23 @@ function ChatPage() {
               <span className="header-title">{userID.full_name}</span>
             </ConversationHeader.Content>
           </ConversationHeader>
-          <Search placeholder="Search..." />
+          <Search onClearClick={() => {
+            setSearchingDebounce("");
+
+          }} placeholder="Search..." onChange={(v) => {
+            searchingIndicator.current = true;
+            setSearchingDebounce(v);
+          }}/>
           <ConversationList>
             {users.map((user: any) => (
               <Conversation
                 active={user.uid === currentChat.uid ? true : false}
                 key={user.uid}
                 onClick={() => {
+                  searchingIndicator.current = false;
                   handleConversationClick();
                   setCurrentChat(user);
+
                 }}
               >
                 <Avatar
@@ -416,7 +451,7 @@ function ChatPage() {
                   },
                 });
               }
-              setPinCode(value);
+              setTypingDebounce(value);
               setMessageInput(value);
             }}
           />
