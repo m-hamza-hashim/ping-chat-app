@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import { LockOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Form, Input, Flex } from "antd";
+import { Button, Checkbox, Form, Input, Flex, message } from "antd";
 import { Link } from "react-router";
 import "./register.css";
 import { auth, createUserWithEmailAndPassword, setDoc, doc, db } from "../../config/firebase";
@@ -10,7 +10,14 @@ const RegPage: React.FC = () => {
 
   // for displaying error due to incorrect credentials
   let [errorMessage, setErrorMessage] = useState<boolean>(false);
+  const [messageApi] = message.useMessage();
 
+  const success = () => {
+    messageApi.open({
+      type: 'success',
+      content: 'Welcome Aboard!',
+    });
+  };
   // runs when the form is submitted
   const onFinish = async (values: any) => {
     createUserWithEmailAndPassword(auth, values.email, values.password)
@@ -18,6 +25,11 @@ const RegPage: React.FC = () => {
         // Signed up
         const user = userCredential.user;
         // ...
+
+        success();
+        
+
+
         console.log("user =======> ", user);
 
         await setDoc(doc(db, "users", user.uid), {

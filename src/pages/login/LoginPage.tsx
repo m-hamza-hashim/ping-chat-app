@@ -1,6 +1,6 @@
 import React, { useState} from 'react';
 import { LockOutlined, MailOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Form, Input, Flex } from 'antd';
+import { Button, Checkbox, Form, Input, Flex, message } from 'antd';
 import { Link} from "react-router";
 import "./login.css"
 import { auth, signInWithEmailAndPassword } from "../../config/firebase";
@@ -11,6 +11,14 @@ const LoginPage: React.FC = () => {
 
   // for displaying error on incorrect credentials
     let [errorMessage, setErrorMessage] = useState<boolean>(false);
+      const [messageApi] = message.useMessage();
+    
+      const success = () => {
+        messageApi.open({
+          type: 'success',
+          content: 'Welcome Back!',
+        });
+      };
 
     // runs when the form is submitted
   const onFinish = (values: any) => {
@@ -18,6 +26,7 @@ const LoginPage: React.FC = () => {
     .then((userCredential) => {
       // Signed in 
       const user = userCredential.user;
+      success();
       console.log("user ==> ", user);
       // ...
       

@@ -91,58 +91,123 @@ function ChatPage() {
 
 // checking user is online or offline
 
-let isOnline = useRef<boolean>(false);
+// let isOnline = useRef<boolean>(false);
 
-const setOnline = async () :Promise<void> => {
-  const onlineRef = doc(db, "users", userID.uid);
+// const setOnline = async () :Promise<void> => {
+//   const onlineRef = doc(db, "users", userID.uid);
   
-  await updateDoc(onlineRef, {
-    online_indicator: true
-  }); 
-};
+//   await updateDoc(onlineRef, {
+//     online_indicator: true
+//   }); 
+// };
 
-useEffect(() => {
-  if (!isOnline.current && !isOffline.current) {
-    isOnline.current = true;
-    setOnline();
-  }
-});
+// useEffect(() => {
+//   if (!isOnline.current && !isOffline.current) {
+//     isOnline.current = true;
+//     setOnline();
+//   }
+// });
 
-  const setOffline = async () : Promise<void> => {
+//   const setOffline = async () : Promise<void> => {
+//     const onlineRef = doc(db, "users", userID.uid);
+
+//     await updateDoc(onlineRef, {
+// online_indicator: false
+// }); 
+
+// isOffline.current = true;
+// logoutFunc();
+//   };
+
+
+//   let isOffline = useRef<boolean>(false);
+
+  // const logoutFunc = (): void => {
+  //   isOnline.current = false;
+  //   if (!isOffline.current) {
+  //     setOffline();
+
+  //   }
+
+  // if(isOffline.current) {
+  //   isOffline.current = false;
+  //   signOut(auth)
+  //     .then(() => {
+  //       // Sign-out successful.
+  //       console.log("signed out");
+  //     })
+  //     .catch((error) => {
+  //       // An error happened.
+  //       console.log("error ---> ", error);
+  //     });
+  // }
+  // };
+
+
+
+
+
+
+
+
+
+
+
+  let isOnline = useRef<boolean>(false);
+
+  const setOnline = async () :Promise<void> => {
     const onlineRef = doc(db, "users", userID.uid);
-
+    
     await updateDoc(onlineRef, {
-online_indicator: false
-}); 
-
-isOffline.current = true;
-logoutFunc();
+      online_indicator: true
+    }); 
   };
-
-
-  let isOffline = useRef<boolean>(false);
-
-  const logoutFunc = (): void => {
-    isOnline.current = false;
-    if (!isOffline.current) {
-      setOffline();
-
+  
+  useEffect(() => {
+    if (!isOnline.current) {
+      isOnline.current = true;
+      setOnline();
     }
+  });
+  
+    const logoutFunc = async () : Promise<void> => {
+            isOnline.current = false;
+      const onlineRef = doc(db, "users", userID.uid);
+  
+      await updateDoc(onlineRef, {
+  online_indicator: false
+  }); 
 
-  if(isOffline.current) {
-    isOffline.current = false;
-    signOut(auth)
-      .then(() => {
-        // Sign-out successful.
-        console.log("signed out");
-      })
-      .catch((error) => {
-        // An error happened.
-        console.log("error ---> ", error);
-      });
-  }
-  };
-      
+
+  signOut(auth)
+        .then(() => {
+          // Sign-out successful.
+          console.log("signed out");
+        })
+        .catch((error) => {
+          // An error happened.
+          console.log("error ---> ", error);
+        });
+ 
+    };
+  
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   // for selecting the chat of a specific user
   const [currentChat, setCurrentChat] = useState<any>({});
