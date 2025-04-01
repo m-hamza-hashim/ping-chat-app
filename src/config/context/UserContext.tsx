@@ -6,12 +6,9 @@ interface IUserContext {
   setUser: Dispatch<SetStateAction<any>>;
 }
 
-
-
 const User = createContext<IUserContext>({
   userID: null,
   setUser: () => {},
 });
 
 export default User;
-

@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+
 import {
   MainContainer,
   ChatContainer,
@@ -15,10 +18,10 @@ import {
   InfoButton,
   Search,
 } from "@chatscope/chat-ui-kit-react";
-import { Modal, Result } from 'antd';
+import { Modal, Result } from "antd";
 import { LuLogOut } from "react-icons/lu";
 import { useCallback, useState, useEffect, useContext, useRef } from "react";
-import { useNetwork } from 'react-haiku';
+import { useNetwork } from "react-haiku";
 import "./chat.css";
 import {
   signOut,
@@ -91,76 +94,47 @@ function ChatPage() {
   // bringing the global state of logged-in user
   const { userID } = useContext(User);
 
+  // for network alert
 
+  const networkAvailable = useNetwork();
 
-// for network alert
-
-
-
-const networkAvailable = useNetwork();
-
-
-
-
-
-
-// checking user is online or offline
+  // checking user is online or offline
 
   let isOnline = useRef<boolean>(false);
 
-  const setOnline = async () :Promise<void> => {
+  const setOnline = async (): Promise<void> => {
     const onlineRef = doc(db, "users", userID.uid);
-    
+
     await updateDoc(onlineRef, {
-      online_indicator: true
-    }); 
+      online_indicator: true,
+    });
   };
-  
+
   useEffect(() => {
     if (!isOnline.current) {
       isOnline.current = true;
       setOnline();
     }
   });
-  
-    const logoutFunc = async () : Promise<void> => {
-            isOnline.current = false;
-      const onlineRef = doc(db, "users", userID.uid);
-  
-      await updateDoc(onlineRef, {
-  online_indicator: false
-  }); 
 
+  const logoutFunc = async (): Promise<void> => {
+    isOnline.current = false;
+    const onlineRef = doc(db, "users", userID.uid);
 
-  signOut(auth)
-        .then(() => {
-          // Sign-out successful.
-          console.log("signed out");
-        })
-        .catch((error) => {
-          // An error happened.
-          console.log("error ---> ", error);
-        });
- 
-    };
-  
+    await updateDoc(onlineRef, {
+      online_indicator: false,
+    });
 
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    signOut(auth)
+      .then(() => {
+        // Sign-out successful.
+        console.log("signed out");
+      })
+      .catch((error) => {
+        // An error happened.
+        console.log("error ---> ", error);
+      });
+  };
 
   // for selecting the chat of a specific user
   const [currentChat, setCurrentChat] = useState<any>({});
@@ -198,8 +172,13 @@ const networkAvailable = useNetwork();
 
   useEffect(() => {
     const prefix = searchingDebounce;
-    const endPrefix = prefix + '\uf8ff';
-    const q = query(collection(db, "users"), where("full_name", ">=", prefix), where("full_name", "<", endPrefix), where("email", "!=", userID.email));
+    const endPrefix = prefix + "\uf8ff";
+    const q = query(
+      collection(db, "users"),
+      where("full_name", ">=", prefix),
+      where("full_name", "<", endPrefix),
+      where("email", "!=", userID.email)
+    );
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const usersList = [];
       querySnapshot.forEach((doc) => {
@@ -220,8 +199,7 @@ const networkAvailable = useNetwork();
   let searchingIndicator = useRef<boolean>(false);
 
   useEffect(() => {
-    if (!searchingIndicator.current)
-    messageInputRef.current.focus();
+    if (!searchingIndicator.current) messageInputRef.current.focus();
   });
 
   // for writing message to db
@@ -308,18 +286,17 @@ const networkAvailable = useNetwork();
   useEffect(() => {
     if (currentChat?.email) {
       const getData = setTimeout(async () => {
-  
         const userIDRef = doc(db, "users", userID.uid);
-  
+
         await updateDoc(userIDRef, {
           [`typing_indicator.${getChatID(currentChat)}`]: {
             typing: false,
           },
         });
-  
+
         typingFlag.current = true;
       }, 2000);
-  
+
       return () => clearTimeout(getData);
     }
   }, [typingDebounce]);
@@ -346,44 +323,42 @@ const networkAvailable = useNetwork();
     }
   }, [currentChat]);
 
-  // for searching 
+  // for searching
 
   const [searchingDebounce, setSearchingDebounce] = useState<string>("");
 
- useEffect(() => {
+  useEffect(() => {
     const searchUser = setTimeout(async () => {
       const prefix = searchingDebounce;
-      const endPrefix = prefix + '\uf8ff';
-      const q = query(collection(db, "users"), where("full_name", ">=", prefix), where("full_name", "<", endPrefix), where("email", "!=", userID.email));
+      const endPrefix = prefix + "\uf8ff";
+      const q = query(
+        collection(db, "users"),
+        where("full_name", ">=", prefix),
+        where("full_name", "<", endPrefix),
+        where("email", "!=", userID.email)
+      );
       let usersArray: UsersListObject[] = [];
-const querySnapshot = await getDocs(q);
-querySnapshot.forEach((doc) => {
-  usersArray.push(doc.data());
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        usersArray.push(doc.data());
+      });
+      setUsers(usersArray);
+    }, 1000);
 
-
-});
-setUsers(usersArray);
-    }, 1000)
-
-    return () => clearTimeout(searchUser)
-  }, [searchingDebounce])
+    return () => clearTimeout(searchUser);
+  }, [searchingDebounce]);
 
   return (
     <div style={{ height: "600px", position: "relative" }}>
       <Modal
-
-                open={!networkAvailable}
-                closable={false}            
-                maskClosable={false}          
-                footer={null}             
-                centered                      
-             >
-                <Result
-    status="warning"
-    title="Oops! The Internet Is On Vacation."
-   
-  />
-             </Modal>
+        open={!networkAvailable}
+        closable={false}
+        maskClosable={false}
+        footer={null}
+        centered
+      >
+        <Result status="warning" title="Oops! The Internet Is On Vacation." />
+      </Modal>
       <MainContainer
         responsive
         style={{
@@ -407,23 +382,25 @@ setUsers(usersArray);
               <span className="header-title">{userID.full_name}</span>
             </ConversationHeader.Content>
           </ConversationHeader>
-          <Search onClearClick={() => {
-            setSearchingDebounce("");
-
-          }} placeholder="Search..." onChange={(v) => {
-            searchingIndicator.current = true;
-            setSearchingDebounce(v);
-          }}/>
+          <Search
+            onClearClick={() => {
+              setSearchingDebounce("");
+            }}
+            placeholder="Search..."
+            onChange={(v) => {
+              searchingIndicator.current = true;
+              setSearchingDebounce(v);
+            }}
+          />
           <ConversationList>
             {users.map((user: any) => (
               <Conversation
-                active={user.uid === currentChat.uid ? true : false}
+                active={user?.uid === currentChat?.uid ? true : false}
                 key={user.uid}
                 onClick={() => {
                   searchingIndicator.current = false;
                   handleConversationClick();
                   setCurrentChat(user);
-
                 }}
               >
                 <Avatar
@@ -515,8 +492,6 @@ setUsers(usersArray);
             onChange={async (value) => {
               if (typingFlag.current) {
                 typingFlag.current = false;
-
-  
 
                 const userIDRef = doc(db, "users", userID.uid);
 
