@@ -193,15 +193,6 @@ function ChatPage() {
     });
   }, []);
 
-  // to bring auto-focus to message input field
-  let messageInputRef = useRef<any>(null);
-
-  let searchingIndicator = useRef<boolean>(false);
-
-  useEffect(() => {
-    if (!searchingIndicator.current) messageInputRef.current.focus();
-  });
-
   // for writing message to db
   let [messageInput, setMessageInput] = useState<string>("");
 
@@ -388,7 +379,6 @@ function ChatPage() {
             }}
             placeholder="Search..."
             onChange={(v) => {
-              searchingIndicator.current = true;
               setSearchingDebounce(v);
             }}
           />
@@ -398,7 +388,6 @@ function ChatPage() {
                 active={user?.uid === currentChat?.uid ? true : false}
                 key={user.uid}
                 onClick={() => {
-                  searchingIndicator.current = false;
                   handleConversationClick();
                   setCurrentChat(user);
                 }}
@@ -487,7 +476,6 @@ function ChatPage() {
 
           <MessageInput
             placeholder="Type message here"
-            ref={messageInputRef}
             onSend={sendMessage}
             onChange={async (value) => {
               if (typingFlag.current) {
