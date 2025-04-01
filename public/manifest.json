@@ -1,7 +1,7 @@
 {
     "name": "Ping",
     "short_name": "Ping",
-    "start_url": "index.html",
+    "start_url": "/",
     "display": "standalone",
     "description": "A messaging service platform",
     "theme_color": "#000000",
