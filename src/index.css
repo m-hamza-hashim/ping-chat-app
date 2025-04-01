@@ -1,0 +1,9 @@
+@media all and (display-mode: standalone) {
+    /* PWA-specific styles */
+    body {
+      min-height: 100vh;
+      /* Fix any spacing issues */
+      margin: 0;
+      padding: 0;
+    }
+  }
