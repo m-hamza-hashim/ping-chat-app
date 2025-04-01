@@ -349,7 +349,7 @@ function ChatPage() {
   }, [searchingDebounce]);
 
   return (
-    <div style={{ height: "600px", position: "relative" }}>
+    <div style={{ height: "97vh", position: "relative" }}>
       <Modal
         open={!networkAvailable}
         closable={false}
