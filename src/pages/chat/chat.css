@@ -14,3 +14,8 @@
 .cs-main-container {
     height: 98vh !important;
 }
+
+@media (max-width: 768px) {
+    .cs-main-container--responsive .cs-search {
+        display: inherit !important;
+    }}
