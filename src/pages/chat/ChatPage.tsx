@@ -476,8 +476,8 @@ function ChatPage() {
 
           <MessageInput
             placeholder="Type message here"
-            autoFocus = "false"
-            activateAfterChange = "false"
+            autoFocus = {false}
+          activateAfterChange = {false}
             onSend={sendMessage}
             onChange={async (value) => {
               if (typingFlag.current) {
