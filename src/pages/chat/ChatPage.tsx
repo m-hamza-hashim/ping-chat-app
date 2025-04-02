@@ -341,11 +341,28 @@ function ChatPage() {
 
   // for removing auto-focus on message input field
 
-  let messageInputRef = useRef<any>(null);
+  const messageInputContainerRef = useRef(null);
 
-  useEffect(() => {
-    messageInputRef.current.blur();
-  });
+// Replace your current effect with this:
+useEffect(() => {
+  // Function to find and blur the actual input element
+  const blurInput = () => {
+    if (messageInputContainerRef.current) {
+      // Look for the actual input element within our container
+      const inputElement = messageInputContainerRef.current.querySelector('input, textarea');
+      if (inputElement) {
+        inputElement.blur();
+      }
+    }
+  };
+
+  // Add a small delay to ensure DOM is updated
+  const timer = setTimeout(blurInput, 50);
+  
+  // Clean up
+  return () => clearTimeout(timer);
+}, [currentChat]); // Only run when chat changes
+
 
   return (
     <div style={{ height: "97vh", position: "relative" }}>
@@ -483,7 +500,7 @@ function ChatPage() {
           </MessageList>
 
           <MessageInput
-          ref={messageInputRef}
+          ref={messageInputContainerRef}
             placeholder="Type message here"
             onSend={sendMessage}
             onChange={async (value) => {
