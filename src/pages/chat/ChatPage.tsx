@@ -339,6 +339,14 @@ function ChatPage() {
     return () => clearTimeout(searchUser);
   }, [searchingDebounce]);
 
+  // for removing auto-focus on message input field
+
+  let messageInputRef = useRef<any>(null);
+
+  useEffect(() => {
+    messageInputRef.current.blur();
+  });
+
   return (
     <div style={{ height: "97vh", position: "relative" }}>
       <Modal
@@ -475,9 +483,8 @@ function ChatPage() {
           </MessageList>
 
           <MessageInput
+          ref={messageInputRef}
             placeholder="Type message here"
-            autoFocus = {true}
-          activateAfterChange = {true}
             onSend={sendMessage}
             onChange={async (value) => {
               if (typingFlag.current) {
