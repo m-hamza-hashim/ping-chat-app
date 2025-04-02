@@ -1,54 +1,98 @@
-# React + TypeScript + Vite
+# Ping - A Real-Time Chat Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![Ping Chat App](https://your-image-url.com/banner.png)  
+A sleek and modern real-time chat application built using **React (Vite + Typescript)**, **ChatScope UI Kit**, **Ant Design**, and powered by **Firebase** for seamless messaging. 
+Ping is also a **Progressive Web App (PWA)**, allowing users to install it on their devices and experience a native-like chat interface, even with limited connectivity.
 
-Currently, two official plugins are available:
+## 🚀 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 🔐 **User Authentication** – Register and log in securely.
+- 💬 **Real-Time Messaging** – Send and receive messages instantly.
+- 📝 **Typing Indicators** – Know when the other user is typing.
+- 🔍 **User Search** – Quickly find users from the list.
+- 🟢 **Online/Offline Status** – See who's available in real-time.
+- 📜 **Last Message Preview** – Get a quick glance at the last conversation.
+- 🚪 **Logout Functionality** – Securely exit the app.
+- 🔥 **Firestore Database** – Reliable and scalable cloud storage for chats.
+- 🚀 PWA Support – Install the app and use it like a native mobile or desktop app.
+- 🌐 Network Status Monitoring – Detect network disconnections and show error messages accordingly.
 
-## Expanding the ESLint configuration
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## 🏗️ Tech Stack
+
+- **Frontend:** HTML5, CSS3, React (Vite + Typescript) ChatScope UI Kit, Ant Design, React Router, React Haiku, date-fns
+- **Backend:** Firebase (Firestore, Authentication, Realtime Database)
+- **Deployment:** Netlify
+
+## 🎥 Demo
+
+👉 [Live Demo](https://your-live-demo-url.com) *(Update with actual link)*
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js (v16+)
+- npm or yarn
+
+### Installation
+
+```sh
+# Clone the repository
+git clone https://github.com/yourusername/ping.git
+
+# Navigate to the project directory
+cd ping
+
+# Install dependencies
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Running the App
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+```sh
+# Start the development server
+npm run dev
 ```
+
+### Building for Production
+
+```sh
+npm run build
+```
+
+### Deploying
+
+Ping can be deployed using Firebase Hosting or any other static hosting service.
+
+```sh
+npm run deploy
+```
+
+## 📱 PWA Support
+
+Ping is a Progressive Web App, meaning:
+
+- It can be installed on mobile and desktop devices.
+- Works offline with cached resources.
+- Provides a seamless, app-like experience.
+
+To install, simply **open Ping in a browser and click ‘Add to Home Screen’**.
+
+## 🛡️ Security & Authentication
+
+Ping utilizes Firebase Authentication to securely handle user login and registration. 
+
+## 🤝 Contributing
+
+Contributions are welcome! Feel free to open an issue or submit a pull request.
+
+## 🛡️ License
+
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+💡 **Made with ❤️ by [M.Hamza Hashim](https://github.com/m-hamza-hashim)**
+
