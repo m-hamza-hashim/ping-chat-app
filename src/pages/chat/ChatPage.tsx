@@ -339,31 +339,6 @@ function ChatPage() {
     return () => clearTimeout(searchUser);
   }, [searchingDebounce]);
 
-  // for removing auto-focus on message input field
-
-  const messageInputContainerRef = useRef(null);
-
-// Replace your current effect with this:
-useEffect(() => {
-  // Function to find and blur the actual input element
-  const blurInput = () => {
-    if (messageInputContainerRef.current) {
-      // Look for the actual input element within our container
-      const inputElement = messageInputContainerRef.current.querySelector('input, textarea');
-      if (inputElement) {
-        inputElement.blur();
-      }
-    }
-  };
-
-  // Add a small delay to ensure DOM is updated
-  const timer = setTimeout(blurInput, 50);
-  
-  // Clean up
-  return () => clearTimeout(timer);
-}, [currentChat]); // Only run when chat changes
-
-
   return (
     <div style={{ height: "97vh", position: "relative" }}>
       <Modal
@@ -500,7 +475,6 @@ useEffect(() => {
           </MessageList>
 
           <MessageInput
-          ref={messageInputContainerRef}
             placeholder="Type message here"
             onSend={sendMessage}
             onChange={async (value) => {
