@@ -463,7 +463,7 @@ function ChatPage() {
                 <Message.Footer
                   sentTime={
                     message.sentTime
-                      ? message.sentTime
+                      ? "sent"
                       : "Sending..."
                   }
                 />
