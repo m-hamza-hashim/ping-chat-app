@@ -212,7 +212,7 @@ function ChatPage() {
     try {
       const docRef = await addDoc(collection(db, "messages"), {
         message: messageInput,
-        sentTime: serverTimestamp(),
+        sentTime: new Date(),
         sender: userID.uid,
         receiver: currentChat.uid,
         chatID: getChatID(currentChat),

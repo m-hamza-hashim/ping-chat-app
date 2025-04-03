@@ -13,6 +13,7 @@ Ping is also a **Progressive Web App (PWA)**, allowing users to install it on th
 - 🟢 **Online/Offline Status** – See who's available in real-time.
 - 📜 **Last Message Preview** – Get a quick glance at the last conversation.
 - 🚪 **Logout Functionality** – Securely exit the app.
+- ⏳ **Message Timestamps** – Each message displays its sent time in the footer.
 - 🔥 **Firestore Database** – Reliable and scalable cloud storage for chats.
 - 🚀 PWA Support – Install the app and use it like a native mobile or desktop app.
 - 🌐 Network Status Monitoring – Detect network disconnections and show error messages accordingly.
@@ -95,4 +96,3 @@ This project is licensed under the [MIT License](LICENSE).
 ---
 
 💡 **Made with ❤️ by [M.Hamza Hashim](https://github.com/m-hamza-hashim)**
-
