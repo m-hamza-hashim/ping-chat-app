@@ -14,6 +14,7 @@ Ping is also a **Progressive Web App (PWA)**, allowing users to install it on th
 - 📜 **Last Message Preview** – Get a quick glance at the last conversation.
 - 🚪 **Logout Functionality** – Securely exit the app.
 - ⏳ **Message Timestamps** – Each message displays its sent time in the footer.
+- ⏳ **Message Timestamps** – Each message displays its sent time in the footer.
 - 🔥 **Firestore Database** – Reliable and scalable cloud storage for chats.
 - 🚀 PWA Support – Install the app and use it like a native mobile or desktop app.
 - 🌐 Network Status Monitoring – Detect network disconnections and show error messages accordingly.
