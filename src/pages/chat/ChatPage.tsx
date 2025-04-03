@@ -212,7 +212,7 @@ function ChatPage() {
     try {
       const docRef = await addDoc(collection(db, "messages"), {
         message: messageInput,
-        sentTime: new Date(),
+        sentTime: serverTimestamp(),
         sender: userID.uid,
         receiver: currentChat.uid,
         chatID: getChatID(currentChat),
@@ -460,11 +460,12 @@ function ChatPage() {
                       : `https://ui-avatars.com/api/?background=random&name=${currentChat.full_name}`
                   }
                 />
+                {console.log(message.sentTime)}
                 <Message.Footer
                   sentTime={
                     message.sentTime
                       ? `Sent ${formatDistanceToNow(
-                          new Date(message.sentTime),
+                          new Date(message.sentTime.toDate()),
                           { addSuffix: true }
                         )}`
                       : "Sending..."
