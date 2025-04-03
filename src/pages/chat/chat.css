@@ -3,11 +3,11 @@
 }
 
 .cs-message--outgoing .cs-message__sent-time {
-    display: block;
+    display: block !important;
 }
 
 .cs-message--incoming .cs-message__sent-time {
-    display: block;
+    display: block !important;
 }
 
 
