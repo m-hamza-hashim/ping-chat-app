@@ -10,7 +10,7 @@ Ping is also a **Progressive Web App (PWA)**, allowing users to install it on th
 
 ## 💬 Try it out!
 
-You can check out ping chat app [here](pingchat.netlify.app).
+You can check out ping chat app [here](https://pingchat.netlify.app). 
 
 ## 🚀 Features
 
