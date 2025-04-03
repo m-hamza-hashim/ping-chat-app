@@ -464,7 +464,7 @@ function ChatPage() {
                   sentTime={
                     message.sentTime
                       ? `Sent ${formatDistanceToNow(
-                          new Date(message.sentTime.toDate()),
+                          message.sentTime,
                           { addSuffix: true }
                         )}`
                       : "Sending..."
