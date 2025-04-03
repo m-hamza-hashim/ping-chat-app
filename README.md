@@ -1,6 +1,10 @@
 # Ping - A Real-Time Chat Application
 
+
+
 ![Ping Chat App](https://github.com/m-hamza-hashim/ping-chat-app/blob/main/src/assets/images/banner.svg.svg)  
+
+
 A sleek and modern real-time chat application built using **React (Vite + Typescript)**, **ChatScope UI Kit**, **Ant Design**, and powered by **Firebase** for seamless messaging. 
 Ping is also a **Progressive Web App (PWA)**, allowing users to install it on their devices and experience a native-like chat interface, even with limited connectivity.
 
