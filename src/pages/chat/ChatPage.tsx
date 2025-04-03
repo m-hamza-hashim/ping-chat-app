@@ -463,13 +463,20 @@ function ChatPage() {
                 <Message.Footer
                   sentTime={
                     message.sentTime
+                      ? message.sentTime
+                      : "Sending..."
+                  }
+                />
+                {/* <Message.Footer
+                  sentTime={
+                    message.sentTime
                       ? `Sent ${formatDistanceToNow(
                           new Date(message.sentTime.toDate()),
                           { addSuffix: true }
                         )}`
                       : "Sending..."
                   }
-                />
+                /> */}
               </Message>
             ))}
           </MessageList>
