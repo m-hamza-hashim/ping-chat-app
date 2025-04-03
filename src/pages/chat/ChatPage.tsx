@@ -460,13 +460,14 @@ function ChatPage() {
                       : `https://ui-avatars.com/api/?background=random&name=${currentChat.full_name}`
                   }
                 />
-                <Message.Footer
+                {/* <Message.Footer
                   sentTime={
                     message.sentTime
                       ? "sent"
                       : "Sending..."
                   }
-                />
+                /> */}
+                <Message.Footer sentTime={"hello"} />
                 {/* <Message.Footer
                   sentTime={
                     message.sentTime
