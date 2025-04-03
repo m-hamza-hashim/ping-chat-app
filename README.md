@@ -8,6 +8,8 @@
 A sleek and modern real-time chat application built using **React (Vite + Typescript)**, **ChatScope UI Kit**, **Ant Design**, and powered by **Firebase** for seamless messaging. 
 Ping is also a **Progressive Web App (PWA)**, allowing users to install it on their devices and experience a native-like chat interface, even with limited connectivity.
 
+## 💬 Try it out at [ping-chat](pingchat.netlify.app)
+
 ## 🚀 Features
 
 - 🔐 **User Authentication** – Register and log in securely.
