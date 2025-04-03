@@ -460,7 +460,7 @@ function ChatPage() {
                       : `https://ui-avatars.com/api/?background=random&name=${currentChat.full_name}`
                   }
                 />
-                {console.log(message.sentTime)}
+                {console.log(new Date(message.sentTime.toDate()))}
                 <Message.Footer
                   sentTime={
                     message.sentTime
