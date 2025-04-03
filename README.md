@@ -33,7 +33,7 @@ Ping is also a **Progressive Web App (PWA)**, allowing users to install it on th
 
 ## 🎥 Demo
 
-👉 [Live Demo](https://your-live-demo-url.com) *(Update with actual link)*
+👉 [Live Demo](https://drive.google.com/file/d/1NL_If69DgwxK9OyD5QYvH_bXvM5uzFUm/view?usp=sharing)
 
 ## 🚀 Getting Started
 
@@ -97,6 +97,7 @@ Contributions are welcome! Feel free to open an issue or submit a pull request.
 ## 🛡️ License
 
 This project is licensed under the [MIT License](LICENSE).
+If you like, please be kind enough to throw this repo a star.
 
 ---
 
