@@ -2,7 +2,7 @@
 
 
 
-![Ping Chat App](https://github.com/m-hamza-hashim/ping-chat-app/blob/main/src/assets/images/banner.svg.svg)  
+![Ping Chat App](https://github.com/m-hamza-hashim/ping-chat-app/blob/main/src/assets/images/banner.png)  
 
 
 A sleek and modern real-time messaging service platform built using **React (Vite + Typescript)**, **ChatScope UI Kit**, **Ant Design**, and powered by **Firebase** for seamless messaging. 
