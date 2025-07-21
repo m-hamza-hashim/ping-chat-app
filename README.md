@@ -101,7 +101,7 @@ Contributions are welcome! Feel free to open an issue or submit a pull request.
 ## 🛡️ License
 
 This project is licensed under the [MIT License](LICENSE).
-If you like, please be kind enough to throw this repo a star.
+If you like, please consider that I need your star.
 
 ---
 
